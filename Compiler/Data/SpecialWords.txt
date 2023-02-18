@@ -1,0 +1,13 @@
+for
+while
+int
+bool
+float
+if
+then
+else
+and
+or 
+void
+print
+input

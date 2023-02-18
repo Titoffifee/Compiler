@@ -18,5 +18,24 @@
     <ClCompile Include="main.cpp">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
+    <ClCompile Include="LexicalAnalysis.cpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Data\Input.txt">
+      <Filter>Файлы заголовков</Filter>
+    </Text>
+    <Text Include="Data\Output.txt">
+      <Filter>Файлы заголовков</Filter>
+    </Text>
+    <Text Include="Data\SpecialWords.txt">
+      <Filter>Файлы заголовков</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LexicalAnalysis.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

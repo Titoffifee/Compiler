@@ -139,7 +139,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="LexicalAnalysis.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Data\Input.txt" />
+    <Text Include="Data\Output.txt" />
+    <Text Include="Data\SpecialWords.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LexicalAnalysis.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
