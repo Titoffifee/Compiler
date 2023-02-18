@@ -1,18 +1,19 @@
 # Грамматика языка
-## Основные определения грамматики
+### Основные определения грамматики
 
 ***program*** ::= \<function> \<program> | \<function>
-
-***name*** ::= \<letter> { \<letter> | \<digit> }
 
 ***letter*** ::= 'a' | ...| 'z' | 'A' | ... | 'Z' | '_'
 
 ***digit*** ::= '0' | ... |'9'
 
+***name*** ::= \<letter> { \<letter> | \<digit> }
+
 ***number*** ::= \<digit> { \<digit> } { '.' \<digit> { \<digit> } }
 
 ***block*** ::= eps | \<action> ';' \<block>
-***action*** ::= \<if> | \<while> | \<for> | \<call function> | \<equal> | \<new value>
+
+***action*** ::= \<if> | \<while> | \<for> | \<call function> | \<equal> | \<new variable>
 
 ### Объявление переменных
 
@@ -20,7 +21,7 @@
 
 ***variable init*** ::= \<name> {'=' \<expression> }
 
-***new value*** ::= \<type> \<variable init> {',' \<variable init>}
+***new variable*** ::= \<type> \<variable init> {',' \<variable init>}
 
 ### Синтаксис функций
 
@@ -36,21 +37,27 @@
   
 ***equal*** ::= \<variable> <=> \<expression> 
 
-***variable*** ::= <name> | <name> '[' <expression> ']'
+***variable*** ::= \<name> | \<name> '\[' \<expression> ']'
 
 ***call function*** ::= \<name> '(' { \<number> | \<variable>} ')'
 
-= ::= '=' | '+=' | '-=' | '*=' | '/=' | %= | |= | &= | ^= 
-v ::= '==' | '!=' | '>' | '<' | '>=' | '<=' 
+***=*** ::= '=' | '+=' | '-=' | '\*=' | '/=' | %= | |= | &= | ^= 
 
-expression ::= <expression1> { 'and' <expression1> | 'or' <expression1> }
-expression1 ::= <expression2> | <expression2> <v> <expression2>
-expression2 ::= <expression3> { '&' <expression3> | '|' <expression3> | '^' <expression3> }
-expression3 ::= <expression4> { '+' <expression4> | '-' <expression4> }
-expression4 ::= <expression5> { '*' <expression5> | '/' <expression5> | '%' <expression5> }
-expression5 ::= <expression6> | '-' <expression6> | '!' <expression6> | '~' <expression6>
-expression6 ::= '(' <expression> ')' | <variable> | <number> | <call function> 
+***v*** ::= '=='  '!=' | '>' | '<' | '>=' | '<=' 
 
+***expression*** ::= \<expression1> { 'and' \<expression1> | 'or' \<expression1> }
+
+***expression1*** ::= \<expression2> | \<expression2> \<v> \<expression2>
+
+***expression2*** ::= \<expression3> { '&' \<expression3> | '|' \<expression3> | '^' \<expression3> }
+
+***expression3*** ::= \<expression4> { '+' \<expression4> | '-' \<expression4> }
+
+***expression4*** ::= \<expression5> { '\*' \<expression5> | '/' \<expression5> | '%' \<expression5> }
+
+***expression5*** ::= \<expression6> | '-' \<expression6> | '!' \<expression6> | '~' \<expression6>
+
+***expression6*** ::= '(' \<expression> ')' | \<variable> | \<number> | \<call function> 
 
 ### Основные конструкции
 
@@ -58,6 +65,6 @@ expression6 ::= '(' <expression> ')' | <variable> | <number> | <call function>
 
 ***while*** ::= 'while' '(' \<expression> ')' '{' \<block> '}' 
 
-***for variable init*** ::= \<new value> | \<new value> '.' \<for variable init>
+***for variable init*** ::= \<new variable> | \<new variable> '.' \<for variable init>
   
 ***for*** ::= 'for' '(' eps | \<for  variable init> ';' \<expression> ';' eps | \<equal> {';' \<equal>} ')' '{' \<block> '}'
