@@ -1,6 +1,6 @@
 #include "SyntacticAnalysis.h"
 
-void ValueType(std::vector<Lexeme>& lexemes, int& i) {
+void BaseType(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] != Type::Special) {
         throw; // ќжидалс€ тип
     }
@@ -12,7 +12,7 @@ void ValueType(std::vector<Lexeme>& lexemes, int& i) {
         ++i;
         if (lexemes[i] == Type::LeftAngleBracket) {
             ++i;
-            ValueType(lexemes, i);
+            BaseType(lexemes, i);
             if (lexemes[i] == Type::RightAngleBracket) {
                 ++i;
                 return;
@@ -45,11 +45,11 @@ void FunctionType(std::vector<Lexeme>& lexemes, int& i) {
         ++i;
         return;
     }
-    ValueType(lexemes, i);
+    BaseType(lexemes, i);
 }
 
 void FunctionValue(std::vector<Lexeme>& lexemes, int& i) {
-    ValueType(lexemes, i);
+    BaseType(lexemes, i);
     if (lexemes[i] != Type::Ident)
         throw; // ќжидалось им€ переменной
     ++i;
@@ -75,8 +75,9 @@ void Function(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] != Type::Ident)
         throw; // ќжидалось им€ функции
     ++i;
-    if (lexemes[i] != Type::LeftRoundBracket)
+    if (lexemes[i] != Type::LeftRoundBracket) {
         throw; // ќжиждалась кругла€ скобка
+    }
     ++i;
     if (lexemes[i] != Type::RightRoundBracket) {
         FucntionParameters(lexemes, i);
@@ -97,7 +98,8 @@ void Function(std::vector<Lexeme>& lexemes, int& i) {
     return;
 }
 
-void SyntaciticAlalysis(std::vector<Lexeme>& lexemes, int& i) {
+void SyntaciticAlalysis(std::vector<Lexeme>& lexemes) {
+    int i = 0;
     while (i != lexemes.size()) {
         Function(lexemes, i);
     }
