@@ -21,15 +21,18 @@ enum class Type {
     LeftSquareBracket,
     RightSquareBracket,
     LeftBrace,
-    RightBrace
+    RightBrace,
+    LeftAngleBracket,
+    RightAngleBracket
 };
 
 struct Lexeme {
     Lexeme();
-    Lexeme(Type type_, std::string value_ = "");
-
-    Type type;
-    std::string value;
+    Lexeme(Type type, std::string value = "");
+    bool operator==(Type type);
+    bool operator!=(Type type);
+    Type type_;
+    std::string value_;
 };
 
 std::vector<Lexeme> LexicalAnalysis();

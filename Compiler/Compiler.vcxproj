@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="LexicalAnalysis.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SyntacticAnalysis.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data\Input.txt" />
@@ -149,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LexicalAnalysis.h" />
+    <ClInclude Include="SyntacticAnalysis.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

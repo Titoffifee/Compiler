@@ -3,6 +3,7 @@ while
 int
 bool
 float
+array
 if
 then
 else

@@ -1,8 +1,8 @@
 #include "LexicalAnalysis.h"
 
-Lexeme::Lexeme() : type(Type::Special), value("") {}
-Lexeme::Lexeme(Type type_, std::string value_) :
-    type(type_), value(value_) {}
+Lexeme::Lexeme() : type_(Type::Special), value_("") {}
+Lexeme::Lexeme(Type type, std::string value) :
+    type_(type), value_(value) {}
 std::ostream& operator << (std::ostream& out, Lexeme& lex) {
     out << "<" << int(lex.type) << ' ' << lex.value << ">";
     return out;
@@ -11,11 +11,18 @@ std::ofstream& operator << (std::ofstream& out, Lexeme& lex) {
     out << "<" << int(lex.type) << ' ' << lex.value << ">";
     return out;
 }
+bool Lexeme::operator==(Type type) {
+    return type_ == type;
+}
+bool Lexeme::operator!=(Type type) {
+    return type_ != type;
+}
 
-void Comment(std::string& code, int& it, bool& correct) {
+void Comment(std::string& code, int& it) {
     ++it;
     while (it < code.size() && code[it] != '@') ++it;
-    if (it == code.size()) correct = false;
+    if (it == code.size())
+        throw;
 }
 
 bool IsSpecial(std::string& value, std::vector <std::string>& special) {
@@ -106,7 +113,7 @@ void Split(std::string& code, int it, std::vector <Lexeme>& lexemes, std::vector
             ++it;
             break;
         case '@':
-            Comment(code, it, correct);
+            Comment(code, it);
             ++it;
             break;
         case '/':
@@ -174,8 +181,7 @@ void Split(std::string& code, int it, std::vector <Lexeme>& lexemes, std::vector
                 ++it;
             } else {
                 std::cout << code[it] << ' ' << it << '\n';
-                correct = false;
-                return;
+                throw;
             }
         }
     }
