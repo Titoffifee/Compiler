@@ -37,7 +37,7 @@
   
 ***equal*** ::= \<variable> <=> \<expression> 
 
-***array indexes*** ::= '\[' <expression> '\]' | '\[' <expression> '\]' \<array indexes>
+***array indexes*** ::= '\[' \<expression> '\]' | '\[' \<expression> '\]' \<array indexes>
 
 ***variable*** ::= \<name> | \<name> \<array indexes>
 
