@@ -209,7 +209,7 @@ void Split(std::string& code, int it, std::vector <Lexeme>& lexemes, std::vector
                 ++it;
             } else {
                 std::cout << code[it] << ' ' << it << '\n';
-                throw;
+                throw "something";
             }
         }
     }
@@ -222,7 +222,11 @@ std::vector<Lexeme> LexicalAnalysis() {
     std::string crt;
     while (!code.eof()) {
         std::getline(code, crt);
-        input += crt + '\n';
+        for (char c : crt) {
+            if (c != '  ') input += c;
+            else input += ' ';
+        }
+        input += '\n';
     }
     std::vector <std::string> special;
     while (spec >> crt) {
