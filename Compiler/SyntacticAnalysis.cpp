@@ -1,5 +1,16 @@
 #include "SyntacticAnalysis.h"
 
+void Expression(std::vector<Lexeme>& lexemes, int& i);
+void Variable(std::vector<Lexeme>& lexemes, int& i);
+void Expression1(std::vector<Lexeme>& lexemes, int& i);
+void Expression2(std::vector<Lexeme>& lexemes, int& i);
+void Expression3(std::vector<Lexeme>& lexemes, int& i);
+void Expression4(std::vector<Lexeme>& lexemes, int& i);
+void Expression5(std::vector<Lexeme>& lexemes, int& i);
+void Expression6(std::vector<Lexeme>& lexemes, int& i);
+void Equal(std::vector<Lexeme>& lexemes, int& i);
+void Block(std::vector<Lexeme>& lexemes, int& i);
+
 void BaseType(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] != Type::Special) {
         throw; // ќжидалс€ тип
@@ -78,7 +89,7 @@ void Expression1(std::vector<Lexeme>& lexemes, int& i) {
 }
 void Expression2(std::vector<Lexeme>& lexemes, int& i) {
     Expression3(lexemes, i);
-    while (lexemes[i].value_ == "&" || lexemes[i].value_ == "|" || lexemes[i].value_ == '^') {
+    while (lexemes[i].value_ == "&" || lexemes[i].value_ == "|" || lexemes[i].value_ == "^") {
         ++i;
         Expression3(lexemes, i);
     }
