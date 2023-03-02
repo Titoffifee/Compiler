@@ -24,9 +24,124 @@ void BaseType(std::vector<Lexeme>& lexemes, int& i) {
     throw; // ќжидалс€ тип
 }
 
-void Expression(std::vector<Lexeme>& lexemes, int& i);
+void CallFunction(std::vector<Lexeme>& lexemes, int& i) {
+    if (lexemes[i] != Type::Ident)
+        throw; // ќжидалось им€ функции
+    ++i;
+    if (lexemes[i] != Type::LeftRoundBracket)
+        throw; // ќжидалась открывающа€ кругла€
+    ++i;
 
-void Equal(std::vector<Lexeme>& lexemes, int& i);
+    if (lexemes[i] == Type::RightRoundBracket) {
+        // нет параметров
+        ++i;
+        return;
+    }
+
+    Expression(lexemes, i);
+    while (lexemes[i] == Type::Comma) {
+        ++i;
+        Expression(lexemes, i);
+    }
+    if (lexemes[i] != Type::RightRoundBracket)
+        throw; // ќжидалась закрывающа€ кругла€
+    ++i;
+}
+
+void ArrayIndexes(std::vector<Lexeme>& lexemes, int& i) {
+    while (lexemes[i] == Type::LeftSquareBracket) {
+        ++i;
+        Expression(lexemes, i);
+        if (lexemes[i] != Type::RightSquareBracket)
+            throw; // ќжидалась закрывающа€ квдатана€
+        ++i;
+    }
+}
+
+void Variable(std::vector<Lexeme>& lexemes, int& i) {
+    if (lexemes[i] != Type::Ident)
+        throw; // ќжидалось им€ переменной
+    ++i;
+    if (lexemes[i] == Type::LeftSquareBracket) {
+        ArrayIndexes(lexemes, i);
+    }
+}
+
+void Expression1(std::vector<Lexeme>& lexemes, int& i) {
+    Expression2(lexemes, i);
+    if (lexemes[i] == Type::LeftAngleBracket || lexemes[i] == Type::RightAngleBracket
+        || lexemes[i].value_ == "!=" || lexemes[i].value_ == "=="
+        || lexemes[i].value_ == ">=" || lexemes[i].value_ == "<=") {
+        ++i;
+        Expression2(lexemes, i);
+    }
+}
+void Expression2(std::vector<Lexeme>& lexemes, int& i) {
+    Expression3(lexemes, i);
+    while (lexemes[i].value_ == "&" || lexemes[i].value_ == "|" || lexemes[i].value_ == '^') {
+        ++i;
+        Expression3(lexemes, i);
+    }
+}
+void Expression3(std::vector<Lexeme>& lexemes, int& i) {
+    Expression4(lexemes, i);
+    while (lexemes[i].value_ == "+" || lexemes[i].value_ == "-") {
+        ++i;
+        Expression4(lexemes, i);
+    }
+}
+void Expression4(std::vector<Lexeme>& lexemes, int& i) {
+    Expression5(lexemes, i);
+    while (lexemes[i].value_ == "*" || lexemes[i].value_ == "/" || lexemes[i].value_ == "%") {
+        ++i;
+        Expression5(lexemes, i);
+    }
+}
+void Expression5(std::vector<Lexeme>& lexemes, int& i) {
+    if (lexemes[i].value_ == "-" || lexemes[i].value_ == "!" || lexemes[i].value_ == "~") {
+        ++i;
+    }
+    Expression6(lexemes, i);
+}
+void Expression6(std::vector<Lexeme>& lexemes, int& i) {
+    if (lexemes[i] == Type::LeftRoundBracket) {
+        ++i;
+        Expression(lexemes, i);
+        if (lexemes[i] != Type::RightRoundBracket) {
+            throw; // ќжидалась закрывающа€ кругла€ скобка
+        }
+        ++i;
+        return;
+    }
+    if (lexemes[i] == Type::Int || lexemes[i] == Type::Float || lexemes[i] == Type::Bool) {
+        ++i;
+        return;
+    }
+    if (lexemes[i] == Type::Ident) {
+        if (lexemes[i + 1] == Type::LeftRoundBracket) {
+            CallFunction(lexemes, i);
+        } else {
+            Variable(lexemes, i);
+        }
+    }
+    throw; // ќжиалось выражение
+}
+
+void Expression(std::vector<Lexeme>& lexemes, int& i) {
+    Expression1(lexemes, i);
+    while (lexemes[i].value_ == "and" || lexemes[i].value_ == "or") {
+        ++i;
+        Expression1(lexemes, i);
+    }
+}
+
+void Equal(std::vector<Lexeme>& lexemes, int& i) {
+    Variable(lexemes, i);
+    if (lexemes[i] != Type::Equal)
+        throw; // ќжидалс€ знак равно
+    ++i;
+    Expression(lexemes, i);
+}
 
 void VariableInit(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] != Type::Ident) 
