@@ -28,11 +28,14 @@ enum class Type {
 
 struct Lexeme {
     Lexeme();
-    Lexeme(Type type, std::string value = "");
+    Lexeme(Type type, int line, std::string value = "");
     bool operator==(Type type);
     bool operator!=(Type type);
     Type type_;
     std::string value_;
+    int line_;
 };
+
+std::ofstream& operator << (std::ostream& out, Lexeme& lex);
 
 std::vector<Lexeme> LexicalAnalysis();
