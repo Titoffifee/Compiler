@@ -41,7 +41,7 @@
 
 ***variable*** ::= \<name> | \<name> \<array indexes>
 
-***call function*** ::= \<name> '(' eps | ( \<number> | \<variable> { ',' \<number> | \<variable>} ) ')'
+***call function*** ::= \<name> '(' eps | ( \<expression> { ',' \<expression> } ) ')'
 
 ***=*** ::= '=' | '+=' | '-=' | '\*=' | '/=' | %= | |= | &= | ^= 
 
