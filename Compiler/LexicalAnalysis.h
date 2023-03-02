@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <sstream>
 
 enum class Type {
     Special = 0,
@@ -27,7 +28,6 @@ enum class Type {
 };
 
 struct Lexeme {
-    Lexeme();
     Lexeme(Type type, int line, std::string value = "");
     bool operator==(Type type);
     bool operator!=(Type type);
@@ -36,6 +36,6 @@ struct Lexeme {
     int line_;
 };
 
-std::ofstream& operator << (std::ostream& out, Lexeme& lex);
+std::ostream& operator<< (std::ostream& out, Lexeme& lex);
 
 std::vector<Lexeme> LexicalAnalysis();

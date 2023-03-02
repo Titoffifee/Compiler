@@ -1,11 +1,9 @@
 #include "LexicalAnalysis.h"
-#include <sstream>
 
-Lexeme::Lexeme() : type_(Type::Special), value_("") {}
 Lexeme::Lexeme(Type type, int line, std::string value) :
     type_(type), line_(line), value_(value) {}
 
-std::ofstream& operator << (std::ofstream& out, Lexeme& lex) {
+std::ostream& operator<< (std::ostream& out, Lexeme& lex) {
     out << "<" << int(lex.type_) << ' ' << lex.value_ << ' ' << lex.line_ << ">";
     return out;
 }
@@ -233,5 +231,6 @@ std::vector<Lexeme> LexicalAnalysis() {
     std::vector <Lexeme> lexemes;
     Split(input, 0, lexemes, special);
     code.close();
+    spec.close();
     return lexemes;
 }

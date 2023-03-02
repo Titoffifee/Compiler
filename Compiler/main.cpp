@@ -1,4 +1,4 @@
-#include "SyntacticAnalysis.h"
+#include "LexicalAnalysis.h"
 
 int main() {
     try {
