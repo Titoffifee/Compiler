@@ -45,7 +45,6 @@ void CallFunction(std::vector<Lexeme>& lexemes, int& i) {
     ++i;
 
     if (lexemes[i] == Type::RightRoundBracket) {
-        // нет параметров
         ++i;
         return;
     }
@@ -139,11 +138,13 @@ void Expression6(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] == Type::Ident) {
         if (lexemes[i + 1] == Type::LeftRoundBracket) {
             CallFunction(lexemes, i);
+            return;
         } else {
             Variable(lexemes, i);
+            return;
         }
     }
-    throw; // Ожиалось выражение
+    throw; // Ожидалось выражение (1)
 }
 
 void Expression(std::vector<Lexeme>& lexemes, int& i) {
@@ -294,24 +295,41 @@ void Action(std::vector<Lexeme>& lexemes, int& i) {
             For(lexemes, i);
             return;
         }
-        throw; //Неправильное спец слово
+        NewVariable(lexemes, i);
+        if (lexemes[i] != Type::Semicolon)
+            throw; // Ожидалась точка с запятой
+        ++i;
+        return;
     }
     
     if (lexemes[i] == Type::Ident) {
-
+        int protected_i = i;
+        Variable(lexemes, i);
+        if (lexemes[i] == Type::Equal) {
+            i = protected_i;
+            Equal(lexemes, i);
+            if (lexemes[i] != Type::Semicolon)
+                throw; // Ожидалась точка с запятой
+            ++i;
+            return;
+        } else {
+            i = protected_i;
+            CallFunction(lexemes, i);
+            if (lexemes[i] != Type::Semicolon)
+                throw; // Ожидалась точка с запятой
+            ++i;
+            return;
+        }
+        throw; // Ожидался вызов или присваивание (1)
     }
 
-    NewVariable(lexemes, i);
+    throw; // Ожидалось действие
 }
 
 void Block(std::vector<Lexeme>& lexemes, int& i) {
     while (lexemes[i] != Type::RightBrace) {
-        Block(lexemes, i);
-        if (lexemes[i] != Type::Semicolon)
-            throw; // Не хватает точки с заяптой
-        ++i;
+        Action(lexemes, i);
     }
-    ++i;
 }
 
 void FunctionType(std::vector<Lexeme>& lexemes, int& i) {
@@ -330,7 +348,7 @@ void FunctionValue(std::vector<Lexeme>& lexemes, int& i) {
     while (lexemes[i] == Type::Comma) {
         ++i;
         if (lexemes[i] != Type::Ident) {
-            throw; // Ожидалось имя перечисляемой переменной
+            throw; // Ожидалось имя переменной
         }
         ++i;
     }
