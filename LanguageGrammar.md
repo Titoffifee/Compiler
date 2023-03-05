@@ -47,7 +47,9 @@
 
 ***v*** ::= '=='  '!=' | '>' | '<' | '>=' | '<=' 
 
-***expression*** ::= \<expression1> { 'and' \<expression1> | 'or' \<expression1> }
+***expression*** ::= \<expression0> { 'and' \<expression0> }
+
+***expression0*** ::= \<expression1> { 'or' \<expression1> }
 
 ***expression1*** ::= \<expression2> | \<expression2> \<v> \<expression2>
 
