@@ -21,7 +21,7 @@
 
 ***variable init*** ::= \<name> {'=' \<expression> }
 
-***new variable*** ::= \<type> \<variable init> {',' \<variable init>}
+***new variable*** ::= \<type> \<variable init> {',' \<variable init>} ';'
 
 ### Синтаксис функций
 
@@ -35,13 +35,13 @@
 
 ### Выражения
   
-***equal*** ::= \<variable> <=> \<expression> 
+***equal*** ::= \<variable> <=> \<expression>  ';'
 
 ***array indexes*** ::= '\[' \<expression> '\]' | '\[' \<expression> '\]' \<array indexes>
 
 ***variable*** ::= \<name> | \<name> \<array indexes>
 
-***call function*** ::= \<name> '(' eps | ( \<expression> { ',' \<expression> } ) ')'
+***call function*** ::= \<name> '(' eps | ( \<expression> { ',' \<expression> } ) ')' ';'
 
 ***=*** ::= '=' | '+=' | '-=' | '\*=' | '/=' | %= | |= | &= | ^= 
 
