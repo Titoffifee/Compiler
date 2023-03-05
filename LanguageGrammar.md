@@ -11,9 +11,9 @@
 
 ***number*** ::= \<digit> { \<digit> } { '.' \<digit> { \<digit> } }
 
-***block*** ::= eps | \<action> ';' \<block>
+***block*** ::= eps | \<action> \<block>
 
-***action*** ::= \<if> | \<while> | \<for> | \<call function> | \<equal> | \<new variable>
+***action*** ::= \<if> | \<while> | \<for> | \<call function> ';' | \<equal> ';' | \<new variable> ';'
 
 ### Объявление переменных
 
@@ -35,7 +35,7 @@
 
 ### Выражения
   
-***equal*** ::= \<variable> <=> \<expression> 
+***equal*** ::= \<variable> <=> \<expression>
 
 ***array indexes*** ::= '\[' \<expression> '\]' | '\[' \<expression> '\]' \<array indexes>
 
