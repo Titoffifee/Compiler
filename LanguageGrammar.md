@@ -11,9 +11,9 @@
 
 ***number*** ::= \<digit> { \<digit> } { '.' \<digit> { \<digit> } }
 
-***block*** ::= eps | \<action> ';' \<block>
+***block*** ::= eps | \<action> \<block>
 
-***action*** ::= \<if> | \<while> | \<for> | \<call function> | \<equal> | \<new variable>
+***action*** ::= \<if> | \<while> | \<for> | \<call function> ';' | \<equal> ';' | \<new variable> ';'
 
 ### Объявление переменных
 
@@ -21,7 +21,7 @@
 
 ***variable init*** ::= \<name> {'=' \<expression> }
 
-***new variable*** ::= \<type> \<variable init> {',' \<variable init>} ';'
+***new variable*** ::= \<type> \<variable init> {',' \<variable init>}
 
 ### Синтаксис функций
 
@@ -35,13 +35,13 @@
 
 ### Выражения
   
-***equal*** ::= \<variable> <=> \<expression>  ';'
+***equal*** ::= \<variable> <=> \<expression>
 
 ***array indexes*** ::= '\[' \<expression> '\]' | '\[' \<expression> '\]' \<array indexes>
 
 ***variable*** ::= \<name> | \<name> \<array indexes>
 
-***call function*** ::= \<name> '(' eps | ( \<expression> { ',' \<expression> } ) ')' ';'
+***call function*** ::= \<name> '(' eps | ( \<expression> { ',' \<expression> } ) ')'
 
 ***=*** ::= '=' | '+=' | '-=' | '\*=' | '/=' | %= | |= | &= | ^= 
 
