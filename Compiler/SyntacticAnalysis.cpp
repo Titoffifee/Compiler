@@ -2,6 +2,7 @@
 
 void Expression(std::vector<Lexeme>& lexemes, int& i);
 void Variable(std::vector<Lexeme>& lexemes, int& i);
+void Expression0(std::vector<Lexeme>& lexemes, int& i);
 void Expression1(std::vector<Lexeme>& lexemes, int& i);
 void Expression2(std::vector<Lexeme>& lexemes, int& i);
 void Expression3(std::vector<Lexeme>& lexemes, int& i);
@@ -78,6 +79,13 @@ void Variable(std::vector<Lexeme>& lexemes, int& i) {
     }
 }
 
+void Expression0(std::vector<Lexeme>& lexemes, int& i) {
+    Expression1(lexemes, i);
+    while (lexemes[i].value_ == "or") {
+        ++i;
+        Expression1(lexemes, i);
+    }
+}
 void Expression1(std::vector<Lexeme>& lexemes, int& i) {
     Expression2(lexemes, i);
     if (lexemes[i] == Type::LeftAngleBracket || lexemes[i] == Type::RightAngleBracket
@@ -139,10 +147,10 @@ void Expression6(std::vector<Lexeme>& lexemes, int& i) {
 }
 
 void Expression(std::vector<Lexeme>& lexemes, int& i) {
-    Expression1(lexemes, i);
-    while (lexemes[i].value_ == "and" || lexemes[i].value_ == "or") {
+    Expression0(lexemes, i);
+    while (lexemes[i].value_ == "and") {
         ++i;
-        Expression1(lexemes, i);
+        Expression0(lexemes, i);
     }
 }
 
