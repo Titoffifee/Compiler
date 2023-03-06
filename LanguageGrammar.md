@@ -19,7 +19,7 @@
 
 ***type*** ::= 'int' | 'bool' | 'float' | array '\<' \<type> '>'
 
-***variable init*** ::= \<name> {'=' \<expression> }
+***variable init*** ::= \<name> ( '=' \<expression> )
 
 ***array indexes*** ::= '\[' \<expression> '\]' | '\[' \<expression> '\]' \<array indexes>
 
