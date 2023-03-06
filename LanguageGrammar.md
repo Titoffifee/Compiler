@@ -17,11 +17,15 @@
 
 ### Объявление переменных
 
-***type*** ::= 'int' | 'bool' | 'float' | 'array' '<' \<type> '>'
+***type*** ::= 'int' | 'bool' | 'float' | array '\<' \<type> '>'
 
-***variable init*** ::= \<name> {'=' \<expression> }
+***variable init*** ::= \<name> ( '=' \<expression> )
 
-***new variable*** ::= \<type> \<variable init> {',' \<variable init>}
+***array indexes*** ::= '\[' \<expression> '\]' | '\[' \<expression> '\]' \<array indexes>
+
+***array init*** ::= \<name> \<array indexes>
+
+***new variable*** ::= \<type> \<variable init> {',' \<variable init>} | 'array' '\<' \<type> '>' \<array init>  { ',' \<array init> }
 
 ### Синтаксис функций
 
@@ -36,8 +40,6 @@
 ### Выражения
   
 ***equal*** ::= \<variable> <=> \<expression>
-
-***array indexes*** ::= '\[' \<expression> '\]' | '\[' \<expression> '\]' \<array indexes>
 
 ***variable*** ::= \<name> | \<name> \<array indexes>
 
@@ -61,7 +63,9 @@
 
 ***expression5*** ::= \<expression6> | '-' \<expression6> | '!' \<expression6> | '~' \<expression6>
 
-***expression6*** ::= '(' \<expression> ')' | \<variable> | \<number> | \<call function> 
+***expression6*** ::= '(' \<expression> ')' | \<variable> | \<number> | \<call function> | \<len>
+
+***len*** ::= 'len' '(' \<name> \<array indexes> ')'
 
 ### Основные конструкции
 
@@ -75,6 +79,6 @@
 
 ***input*** ::= 'input' '(' \<variable> { ',' \<variable> } ')'
 
-***print*** ::= 'print' '(' \<variable> { ',' \<variable> } ')'
+***print*** ::= 'print' '(' \<expression> { ',' \<expression> } ')'
 
 ***return*** ::= 'return' '(' (eps | expression) ')'
