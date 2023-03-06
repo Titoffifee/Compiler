@@ -17,11 +17,15 @@
 
 ### Объявление переменных
 
-***type*** ::= 'int' | 'bool' | 'float' | 'array' '<' \<type> '>'
+***type*** ::= 'int' | 'bool' | 'float'
 
 ***variable init*** ::= \<name> {'=' \<expression> }
 
-***new variable*** ::= \<type> \<variable init> {',' \<variable init>}
+***array indexes*** ::= '\[' \<expression> '\]' | '\[' \<expression> '\]' \<array indexes>
+
+***array init*** ::= \<name> \<array indexes>
+
+***new variable*** ::= \<type> \<variable init> {',' \<variable init>} | 'array' \<type> \<array init> { ',' \<array init> }
 
 ### Синтаксис функций
 
@@ -36,8 +40,6 @@
 ### Выражения
   
 ***equal*** ::= \<variable> <=> \<expression>
-
-***array indexes*** ::= '\[' \<expression> '\]' | '\[' \<expression> '\]' \<array indexes>
 
 ***variable*** ::= \<name> | \<name> \<array indexes>
 
