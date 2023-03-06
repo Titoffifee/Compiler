@@ -13,9 +13,8 @@ void Equal(std::vector<Lexeme>& lexemes, int& i);
 void Block(std::vector<Lexeme>& lexemes, int& i);
 
 void BaseType(std::vector<Lexeme>& lexemes, int& i) {
-    if (lexemes[i] != Type::Special) {
-        throw; // Ожидался тип
-    }
+    if (lexemes[i] != Type::Special)
+        throw new ExceptionType(&lexemes[i]);
     if (lexemes[i].value_ == "int" || lexemes[i].value_ == "bool" || lexemes[i].value_ == "float") {
         ++i;
         return;
@@ -29,19 +28,19 @@ void BaseType(std::vector<Lexeme>& lexemes, int& i) {
                 ++i;
                 return;
             }
-            throw; // Ожидалась закрывающая угловая скобка
+            throw new ExceptionRightAngleBracket(&lexemes[i]);
         } 
-        throw; // Ожидалась открывающая угловая скобка
+        throw new ExceptionLeftAngleBracket(&lexemes[i]);
     }
-    throw; // Ожидался тип
+    throw new ExceptionType(&lexemes[i]);
 }
 
 void CallFunction(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] != Type::Ident)
-        throw; // Ожидалось имя функции
+        throw new ExceptionFunctionName(&lexemes[i]);
     ++i;
     if (lexemes[i] != Type::LeftRoundBracket)
-        throw; // Ожидалась открывающая круглая
+        throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
 
     if (lexemes[i] == Type::RightRoundBracket) {
@@ -55,7 +54,7 @@ void CallFunction(std::vector<Lexeme>& lexemes, int& i) {
         Expression(lexemes, i);
     }
     if (lexemes[i] != Type::RightRoundBracket)
-        throw; // Ожидалась закрывающая круглая
+        throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
 }
 
@@ -64,14 +63,14 @@ void ArrayIndexes(std::vector<Lexeme>& lexemes, int& i) {
         ++i;
         Expression(lexemes, i);
         if (lexemes[i] != Type::RightSquareBracket)
-            throw; // Ожидалась закрывающая квдатаная
+            throw new ExceptionRightSquareBracket(&lexemes[i]);
         ++i;
     }
 }
 
 void Variable(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] != Type::Ident)
-        throw; // Ожидалось имя переменной
+        throw new ExceptionVariableName(&lexemes[i]);
     ++i;
     if (lexemes[i] == Type::LeftSquareBracket) {
         ArrayIndexes(lexemes, i);
@@ -80,17 +79,17 @@ void Variable(std::vector<Lexeme>& lexemes, int& i) {
 
 void Len(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i].value_ != "len")
-        throw; // ожидалось len
+        throw new ExceptionSpecial("len", &lexemes[i]);
     ++i;
     if (lexemes[i] != Type::LeftRoundBracket)
-        throw; // Ожидалась откр круглая
+        throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
     if (lexemes[i] != Type::Ident)
-        throw; // Ожидалось имя массива
+        throw new ExceptionVariableName(&lexemes[i]);
     ++i;
     ArrayIndexes(lexemes, i);
     if (lexemes[i] != Type::RightRoundBracket)
-        throw; // Ожидалась закр круглая
+        throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
 }
 
@@ -142,7 +141,7 @@ void Expression6(std::vector<Lexeme>& lexemes, int& i) {
         ++i;
         Expression(lexemes, i);
         if (lexemes[i] != Type::RightRoundBracket) {
-            throw; // Ожидалась закрывающая круглая скобка
+            throw new ExceptionRightRoundBracket(&lexemes[i]);
         }
         ++i;
         return;
@@ -164,7 +163,7 @@ void Expression6(std::vector<Lexeme>& lexemes, int& i) {
             return;
         }
     }
-    throw; // Ожидалось выражение (1)
+    throw new Exception("Неправильное выражение", &lexemes[i]);
 }
 
 void Expression(std::vector<Lexeme>& lexemes, int& i) {
@@ -178,14 +177,14 @@ void Expression(std::vector<Lexeme>& lexemes, int& i) {
 void Equal(std::vector<Lexeme>& lexemes, int& i) {
     Variable(lexemes, i);
     if (lexemes[i] != Type::Equal)
-        throw; // Ожидался знак равно
+        throw new ExceptionSpecial("=", &lexemes[i]);
     ++i;
     Expression(lexemes, i);
 }
 
 void VariableInit(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] != Type::Ident) 
-        throw; // Ожидалось имя
+        throw new ExceptionVariableName(&lexemes[i]);
     ++i;
     if (lexemes[i] == Type::Equal) {
         ++i;
@@ -195,7 +194,7 @@ void VariableInit(std::vector<Lexeme>& lexemes, int& i) {
 
 void ArrayInit(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] != Type::Ident)
-        throw; // Ожидалось имя
+        throw new ExceptionVariableName(&lexemes[i]);
     ++i;
     ArrayIndexes(lexemes, i);
 }
@@ -204,11 +203,11 @@ void NewVariable(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i].value_ == "array") {
         ++i;
         if (lexemes[i] != Type::LeftAngleBracket)
-            throw; // Ожидалась откр угловая
+            throw new ExceptionLeftAngleBracket(&lexemes[i]);
         ++i;
         BaseType(lexemes, i);
         if (lexemes[i] != Type::RightAngleBracket)
-            throw; // Ожидалась закр угловая
+            throw new ExceptionRightAngleBracket(&lexemes[i]);
         ++i;
         ArrayInit(lexemes, i);
         while (lexemes[i] == Type::Comma) {
@@ -227,51 +226,51 @@ void NewVariable(std::vector<Lexeme>& lexemes, int& i) {
 
 void If(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i].value_ != "if")
-        throw; // Ожидалось слово "if"
+        throw new ExceptionSpecial("if", &lexemes[i]);
     ++i;
     if (lexemes[i] != Type::LeftRoundBracket)
-        throw; // Ожидалась открывающая круглая 
+        throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
     Expression(lexemes, i);
     if (lexemes[i] != Type::RightRoundBracket)
-        throw; // Ожидалась закрывающая круглая 
+        throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
     if (lexemes[i] != Type::LeftBrace)
-        throw; // Ожидалась открывающая фигурная 
+        throw new ExceptionLeftBrace(&lexemes[i]);
     ++i;
     Block(lexemes, i);
     if (lexemes[i] != Type::RightBrace)
-        throw; // Ожидалась закрывающая фигурная
+        throw new ExceptionRightBrace(&lexemes[i]);
     ++i;
     if (lexemes[i] == Type::Special && lexemes[i].value_ == "else") {
         ++i;
         if (lexemes[i] != Type::LeftBrace)
-            throw; // Ожидалась открывающая фигурная 
+            throw new ExceptionLeftBrace(&lexemes[i]);
         ++i;
         Block(lexemes, i);
         if (lexemes[i] != Type::RightBrace)
-            throw; // Ожидалась закрывающая фигурная
+            throw new ExceptionRightBrace(&lexemes[i]);
         ++i;
     }
 }
 
 void While(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i].value_ != "while")
-        throw; // Ожидалось слово "while"
+        throw new ExceptionSpecial("while", &lexemes[i]);
     ++i;
     if (lexemes[i] != Type::LeftRoundBracket)
-        throw; // Ожидалась открывающая круглая 
+        throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
     Expression(lexemes, i);
     if (lexemes[i] != Type::RightRoundBracket)
-        throw; // Ожидалась закрывающая круглая 
+        throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
     if (lexemes[i] != Type::LeftBrace)
-        throw; // Ожидалась открывающая фигурная 
+        throw new ExceptionLeftBrace(&lexemes[i]);
     ++i;
     Block(lexemes, i);
     if (lexemes[i] != Type::RightBrace)
-        throw; // Ожидалась закрывающая фигурная
+        throw new ExceptionRightBrace(&lexemes[i]);
     ++i;
 }
 
@@ -285,22 +284,22 @@ void ForVariableInit(std::vector<Lexeme>& lexemes, int& i) {
 
 void For(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i].value_ != "for")
-        throw; // Ожидалось слово "for"
+        throw new ExceptionSpecial("for", &lexemes[i]);
     ++i;
     if (lexemes[i] != Type::LeftRoundBracket)
-        throw; // Ожидалась открывающая круглая 
+        throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
 
     if (lexemes[i] != Type::Semicolon) {
         ForVariableInit(lexemes, i);
     }
     if (lexemes[i] != Type::Semicolon)
-        throw; // Нужна точка с запятой
+        throw new ExceptionSemicolon(&lexemes[i]);
     ++i;
 
     Expression(lexemes, i);
     if (lexemes[i] != Type::Semicolon)
-        throw; // Нужна точка с запятой
+        throw new ExceptionSemicolon(&lexemes[i]);
     ++i;
 
     if (lexemes[i] != Type::RightRoundBracket) {
@@ -312,24 +311,24 @@ void For(std::vector<Lexeme>& lexemes, int& i) {
     }
 
     if (lexemes[i] != Type::RightRoundBracket)
-        throw; // Ожидалась закрывающая круглая
+        throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
 
     if (lexemes[i] != Type::LeftBrace)
-        throw; // Ожидалась открывающая фигурная 
+        throw new ExceptionLeftBrace(&lexemes[i]);
     ++i;
     Block(lexemes, i);
     if (lexemes[i] != Type::RightBrace)
-        throw; // Ожидалась закрывающая фигурная
+        throw new ExceptionRightBrace(&lexemes[i]);
     ++i;
 }
 
 void Input(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i].value_ != "input")
-        throw; // Ожидалось input
+        throw new ExceptionSpecial("input", &lexemes[i]);
     ++i;
     if (lexemes[i] != Type::LeftRoundBracket)
-        throw; // Ожидалась кругля откр
+        throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
     Variable(lexemes, i);
     while (lexemes[i] == Type::Comma) {
@@ -337,16 +336,16 @@ void Input(std::vector<Lexeme>& lexemes, int& i) {
         Variable(lexemes, i);
     }
     if (lexemes[i] != Type::RightRoundBracket)
-        throw; // Ожидалась закр круг
+        throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
 }
 
 void Print(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i].value_ != "print")
-        throw; // Ожидалось input
+        throw new ExceptionSpecial("print", &lexemes[i]);
     ++i;
     if (lexemes[i] != Type::LeftRoundBracket)
-        throw; // Ожидалась кругля откр
+        throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
     Expression(lexemes, i);
     while (lexemes[i] == Type::Comma) {
@@ -354,20 +353,20 @@ void Print(std::vector<Lexeme>& lexemes, int& i) {
         Expression(lexemes, i);
     }
     if (lexemes[i] != Type::RightRoundBracket)
-        throw; // Ожидалась закр круг
+        throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
 }
 
 void Return(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i].value_ != "return")
-        throw; // Ожидалось input
+        throw new ExceptionSpecial("return", &lexemes[i]);
     ++i;
     if (lexemes[i] != Type::LeftRoundBracket)
-        throw; // Ожидалась кругля откр
+        throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
     Expression(lexemes, i);
     if (lexemes[i] != Type::RightRoundBracket)
-        throw; // Ожидалась закр круг
+        throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
 }
 
@@ -388,27 +387,27 @@ void Action(std::vector<Lexeme>& lexemes, int& i) {
         if (lexemes[i].value_ == "input") {
             Input(lexemes, i);
             if (lexemes[i] != Type::Semicolon)
-                throw; // Ожидалась точка с запятой
+                throw new ExceptionSemicolon(&lexemes[i]);
             ++i;
             return;
         }
         if (lexemes[i].value_ == "print") {
             Print(lexemes, i);
             if (lexemes[i] != Type::Semicolon)
-                throw; // Ожидалась точка с запятой
+                throw new ExceptionSemicolon(&lexemes[i]);
             ++i;
             return;
         }
         if (lexemes[i].value_ == "return") {
             Return(lexemes, i);
             if (lexemes[i] != Type::Semicolon)
-                throw; // Ожидалась точка с запятой
+                throw new ExceptionSemicolon(&lexemes[i]);
             ++i;
             return;
         }
         NewVariable(lexemes, i);
         if (lexemes[i] != Type::Semicolon)
-            throw; // Ожидалась точка с запятой
+            throw new ExceptionSemicolon(&lexemes[i]);
         ++i;
         return;
     }
@@ -420,20 +419,20 @@ void Action(std::vector<Lexeme>& lexemes, int& i) {
             i = protected_i;
             Equal(lexemes, i);
             if (lexemes[i] != Type::Semicolon)
-                throw; // Ожидалась точка с запятой
+                throw new ExceptionSemicolon(&lexemes[i]);
             ++i;
             return;
         } else {
             i = protected_i;
             CallFunction(lexemes, i);
             if (lexemes[i] != Type::Semicolon)
-                throw; // Ожидалась точка с запятой
+                throw new ExceptionSemicolon(&lexemes[i]);
             ++i;
             return;
         }
-        throw; // Ожидался вызов или присваивание (1)
+        throw new Exception(std::string("Ожидалось присваивание или вызов функции"), &lexemes[i]);
     }
-    throw; // Ожидалось действие
+    throw new Exception(std::string("Ожидалось какое-то действие"), &lexemes[i]);
 }
 
 void Block(std::vector<Lexeme>& lexemes, int& i) {
@@ -453,12 +452,12 @@ void FunctionType(std::vector<Lexeme>& lexemes, int& i) {
 void FunctionValue(std::vector<Lexeme>& lexemes, int& i) {
     BaseType(lexemes, i);
     if (lexemes[i] != Type::Ident)
-        throw; // Ожидалось имя переменной
+        throw new ExceptionVariableName(&lexemes[i]);
     ++i;
     while (lexemes[i] == Type::Comma) {
         ++i;
         if (lexemes[i] != Type::Ident) {
-            throw; // Ожидалось имя переменной
+            throw new ExceptionVariableName(&lexemes[i]);
         }
         ++i;
     }
@@ -475,26 +474,26 @@ void FucntionParameters(std::vector<Lexeme>& lexemes, int& i) {
 void Function(std::vector<Lexeme>& lexemes, int& i) {
     FunctionType(lexemes, i);
     if (lexemes[i] != Type::Ident)
-        throw; // Ожидалось имя функции
+        throw new ExceptionFunctionName(&lexemes[i]);
     ++i;
     if (lexemes[i] != Type::LeftRoundBracket) {
-        throw; // Ожиждалась круглая скобка
+        throw new ExceptionLeftRoundBracket(&lexemes[i]);
     }
     ++i;
     if (lexemes[i] != Type::RightRoundBracket) {
         FucntionParameters(lexemes, i);
     }
     if (lexemes[i] != Type::RightRoundBracket) {
-        throw; // Ожидалась закрывающая круглая скобка
+        throw new ExceptionRightRoundBracket(&lexemes[i]);
     }
     ++i;
     if (lexemes[i] != Type::LeftBrace) {
-        throw; // Ожидалась фигурная скобка для блока
+        throw new ExceptionLeftBrace(&lexemes[i]);
     }
     ++i;
     Block(lexemes, i);
     if (lexemes[i] != Type::RightBrace) {
-        throw; // Ожидалась закрывающая фигурная скобка
+        throw new ExceptionRightBrace(&lexemes[i]);
     }
     ++i;
     return;

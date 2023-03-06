@@ -7,7 +7,7 @@ int main() {
         SyntaciticAlalysis(lexemes);
         std::cout << "Всё корректно!";
     }
-    catch (ExceptionInRow* exception) {
+    catch (Exception* exception) {
         exception->print();
         delete exception;
     }

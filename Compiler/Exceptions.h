@@ -4,18 +4,89 @@
 
 struct Lexeme;
 
-class ExceptionInRow {
+class Exception {
 public:
-    ExceptionInRow(std::string text, Lexeme* lexeme);
-    virtual ~ExceptionInRow() {}
-    virtual void print() = 0;
-protected:
+    Exception(std::string text, Lexeme* lexeme);
+    virtual ~Exception() {}
+    virtual void print();
     std::string text_;
     Lexeme* lexeme_;
 };
 
-class ExceptionInLexeme : public ExceptionInRow {
+class ExceptionFunctionName : public Exception {
 public:
-    ExceptionInLexeme(std::string text, Lexeme* lexeme);
+    ExceptionFunctionName(Lexeme* lexeme);
+    virtual void print();
+};
+
+class ExceptionLeftRoundBracket : public Exception {
+public:
+    ExceptionLeftRoundBracket(Lexeme* lexeme);
+    virtual void print();
+};
+
+class ExceptionLeftBrace : public Exception {
+public:
+    ExceptionLeftBrace(Lexeme* lexeme);
+    virtual void print();
+};
+
+class ExceptionLeftSquareBracket : public Exception {
+public:
+    ExceptionLeftSquareBracket(Lexeme* lexeme);
+    virtual void print();
+};
+
+class ExceptionLeftAngleBracket : public Exception {
+public:
+    ExceptionLeftAngleBracket(Lexeme* lexeme);
+    virtual void print();
+};
+
+class ExceptionRightRoundBracket : public Exception {
+public:
+    ExceptionRightRoundBracket(Lexeme* lexeme);
+    virtual void print();
+};
+
+class ExceptionRightBrace : public Exception {
+public:
+    ExceptionRightBrace(Lexeme* lexeme);
+    virtual void print();
+};
+
+class ExceptionRightSquareBracket : public Exception {
+public:
+    ExceptionRightSquareBracket(Lexeme* lexeme);
+    virtual void print();
+};
+
+class ExceptionRightAngleBracket : public Exception {
+public:
+    ExceptionRightAngleBracket(Lexeme* lexeme);
+    virtual void print();
+};
+
+class ExceptionVariableName: public Exception{
+public:
+    ExceptionVariableName(Lexeme* lexeme);
+    virtual void print();
+};
+
+class ExceptionSemicolon : public Exception {
+public:
+    ExceptionSemicolon(Lexeme* lexeme);
+    virtual void print();
+};
+
+class ExceptionSpecial : public Exception {
+public:
+    ExceptionSpecial(std::string word, Lexeme* lexeme);
+    virtual void print();
+};
+
+class ExceptionType : public Exception {
+public:
+    ExceptionType(Lexeme* lexeme);
     virtual void print();
 };
