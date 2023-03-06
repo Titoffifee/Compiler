@@ -17,7 +17,7 @@
 
 ### Объявление переменных
 
-***type*** ::= 'int' | 'bool' | 'float'
+***type*** ::= 'int' | 'bool' | 'float' | array '\<' \<type> '>'
 
 ***variable init*** ::= \<name> {'=' \<expression> }
 
@@ -25,7 +25,7 @@
 
 ***array init*** ::= \<name> \<array indexes>
 
-***new variable*** ::= \<type> \<variable init> {',' \<variable init>} | 'array' \<type> \<array init> { ',' \<array init> }
+***new variable*** ::= \<type> \<variable init> {',' \<variable init>} | 'array' '\<' \<type> '>' \<array init>  { ',' \<array init> }
 
 ### Синтаксис функций
 
@@ -63,7 +63,9 @@
 
 ***expression5*** ::= \<expression6> | '-' \<expression6> | '!' \<expression6> | '~' \<expression6>
 
-***expression6*** ::= '(' \<expression> ')' | \<variable> | \<number> | \<call function> 
+***expression6*** ::= '(' \<expression> ')' | \<variable> | \<number> | \<call function> | \<len>
+
+***len*** ::= 'len' '(' \<name> \<array indexes> ')'
 
 ### Основные конструкции
 
