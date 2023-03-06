@@ -79,6 +79,6 @@
 
 ***input*** ::= 'input' '(' \<variable> { ',' \<variable> } ')'
 
-***print*** ::= 'print' '(' \<variable> { ',' \<variable> } ')'
+***print*** ::= 'print' '(' \<expression> { ',' \<expression> } ')'
 
 ***return*** ::= 'return' '(' (eps | expression) ')'
