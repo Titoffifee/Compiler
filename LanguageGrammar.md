@@ -13,7 +13,7 @@
 
 ***block*** ::= eps | \<action> \<block>
 
-***action*** ::= \<if> | \<while> | \<for> | \<call function> ';' | \<equal> ';' | \<new variable> ';'
+***action*** ::= \<if> | \<while> | \<for> | \<call function> ';' | \<equal> ';' | \<new variable> ';' | \<print> ';' | \<input> ';' | \<return> ';'
 
 ### Объявление переменных
 
@@ -72,3 +72,9 @@
 ***for variable init*** ::= \<new variable> | \<new variable> '.' \<for variable init>
   
 ***for*** ::= 'for' '(' eps | \<for  variable init> ';' \<expression> ';' eps | \<equal> {';' \<equal>} ')' '{' \<block> '}'
+
+***input*** ::= 'input' '(' \<variable> { ',' \<variable> } ')'
+
+***print*** ::= 'print' '(' \<variable> { ',' \<variable> } ')'
+
+***return*** ::= 'return' '(' (eps | expression) ')'
