@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Exceptions.cpp" />
     <ClCompile Include="LexicalAnalysis.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SemanticAnalysis.cpp" />
@@ -150,6 +151,7 @@
     <Text Include="Data\SpecialWords.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Exceptions.h" />
     <ClInclude Include="LexicalAnalysis.h" />
     <ClInclude Include="SemanticAnalysis.h" />
     <ClInclude Include="SyntacticAnalysis.h" />

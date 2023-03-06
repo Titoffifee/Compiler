@@ -2,7 +2,6 @@
 
 Lexeme::Lexeme(Type type, int line, std::string value) :
     type_(type), line_(line), value_(value) {}
-
 std::ostream& operator<< (std::ostream& out, Lexeme& lex) {
     out << "<" << int(lex.type_) << ' ' << lex.value_ << ' ' << lex.line_ << ">";
     return out;
@@ -188,7 +187,7 @@ void Split(std::string& code, int it, std::vector <Lexeme>& lexemes, std::vector
                 lexemes.push_back(Lexeme(Type::Operation, line, "<="));
             } else {
                 ++it;
-                lexemes.push_back(Lexeme(Type::Operation, line, "<"));
+                lexemes.push_back(Lexeme(Type::LeftAngleBracket, line, "<"));
             }
             break;
         case '>':
@@ -197,7 +196,7 @@ void Split(std::string& code, int it, std::vector <Lexeme>& lexemes, std::vector
                 lexemes.push_back(Lexeme(Type::Operation, line, ">="));
             } else {
                 ++it;
-                lexemes.push_back(Lexeme(Type::Operation, line, ">"));
+                lexemes.push_back(Lexeme(Type::RightAngleBracket, line, ">"));
             }
             break;
         default:
