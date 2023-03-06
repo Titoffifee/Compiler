@@ -73,7 +73,7 @@ void Number(std::string& code, int& it, std::vector <Lexeme>& lexemes, int line)
 }
 
 void Split(std::string& code, int it, std::vector <Lexeme>& lexemes, std::vector <std::string>& special) {
-    int line = 0;
+    int line = 1;
     while (it < code.size()) {
         switch (code[it]) {
         case '\n':
