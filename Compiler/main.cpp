@@ -2,8 +2,8 @@
 
 int main() {
     setlocale(LC_ALL, "Russian");
+    std::vector<Lexeme> lexemes = LexicalAnalysis();
     try {
-        std::vector<Lexeme> lexemes = LexicalAnalysis();
         SyntaciticAlalysis(lexemes);
         std::cout << "Всё корректно!";
     }

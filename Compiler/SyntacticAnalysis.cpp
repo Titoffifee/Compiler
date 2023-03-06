@@ -183,7 +183,7 @@ void Equal(std::vector<Lexeme>& lexemes, int& i) {
 }
 
 void VariableInit(std::vector<Lexeme>& lexemes, int& i) {
-    if (lexemes[i] != Type::Ident) 
+    if (lexemes[i] != Type::Ident)
         throw new ExceptionVariableName(&lexemes[i]);
     ++i;
     if (lexemes[i] == Type::Equal) {
