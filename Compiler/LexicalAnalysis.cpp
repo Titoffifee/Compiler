@@ -46,19 +46,19 @@ void String(std::string& code, int& it, std::vector <Lexeme>& lexemes, std::vect
 
 void Number(std::string& code, int& it, std::vector <Lexeme>& lexemes, int line) {
     std::string crt = "";
-    if ((code[it + 1] < '0' || '9' < code[it + 1]) && code[it + 1] != '.') {
+    if ((code[it + 1] < '0' || '9' < code[it + 1]) && (code[it + 1] != '.' || code[it + 2] < '0' || '9' < code[it + 2])) {
         crt += code[it];
         if (code[it] == '0' || code[it] == '1') {
             lexemes.push_back(Lexeme(Type::Bool, line, crt));
             return;
         }
-        lexemes.push_back(Lexeme(Type::Int, line ,crt));
+        lexemes.push_back(Lexeme(Type::Int, line, crt));
         return;
     }
     while ('0' <= code[it] && code[it] <= '9') {
         crt += code[it++];
     }
-    if (code[it] != '.') {
+    if (code[it] != '.' || code[it + 1] < '0' || '9' < code[it + 1]) {
         lexemes.push_back(Lexeme(Type::Int, line, crt));
         --it;
         return;
