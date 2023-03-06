@@ -78,6 +78,22 @@ void Variable(std::vector<Lexeme>& lexemes, int& i) {
     }
 }
 
+void Len(std::vector<Lexeme>& lexemes, int& i) {
+    if (lexemes[i].value_ != "len")
+        throw; // ожидалось len
+    ++i;
+    if (lexemes[i] != Type::LeftRoundBracket)
+        throw; // ќжидалась откр кругла€
+    ++i;
+    if (lexemes[i] != Type::Ident)
+        throw; // ќжидалось им€ массива
+    ++i;
+    ArrayIndexes(lexemes, i);
+    if (lexemes[i] != Type::RightRoundBracket)
+        throw; // ќжидалась закр кругла€
+    ++i;
+}
+
 void Expression0(std::vector<Lexeme>& lexemes, int& i) {
     Expression1(lexemes, i);
     while (lexemes[i].value_ == "or") {
@@ -135,6 +151,10 @@ void Expression6(std::vector<Lexeme>& lexemes, int& i) {
         ++i;
         return;
     }
+    if (lexemes[i].value_ == "len") {
+        Len(lexemes, i);
+        return;
+    }
     if (lexemes[i] == Type::Ident) {
         if (lexemes[i + 1] == Type::LeftRoundBracket) {
             CallFunction(lexemes, i);
@@ -173,12 +193,35 @@ void VariableInit(std::vector<Lexeme>& lexemes, int& i) {
     }
 }
 
+void ArrayInit(std::vector<Lexeme>& lexemes, int& i) {
+    if (lexemes[i] != Type::Ident)
+        throw; // ќжидалось им€
+    ++i;
+    ArrayIndexes(lexemes, i);
+}
+
 void NewVariable(std::vector<Lexeme>& lexemes, int& i) {
-    BaseType(lexemes, i);
-    VariableInit(lexemes, i);
-    while (lexemes[i] == Type::Comma) {
+    if (lexemes[i].value_ == "array") {
         ++i;
+        if (lexemes[i] != Type::LeftAngleBracket)
+            throw; // ќжидалась откр углова€
+        ++i;
+        BaseType(lexemes, i);
+        if (lexemes[i] != Type::RightAngleBracket)
+            throw; // ќжидалась закр углова€
+        ++i;
+        ArrayInit(lexemes, i);
+        while (lexemes[i] == Type::Comma) {
+            ++i;
+            ArrayInit(lexemes, i);
+        }
+    } else {
+        BaseType(lexemes, i);
         VariableInit(lexemes, i);
+        while (lexemes[i] == Type::Comma) {
+            ++i;
+            VariableInit(lexemes, i);
+        }
     }
 }
 
@@ -281,6 +324,53 @@ void For(std::vector<Lexeme>& lexemes, int& i) {
     ++i;
 }
 
+void Input(std::vector<Lexeme>& lexemes, int& i) {
+    if (lexemes[i].value_ != "input")
+        throw; // ќжидалось input
+    ++i;
+    if (lexemes[i] != Type::LeftRoundBracket)
+        throw; // ќжидалась кругл€ откр
+    ++i;
+    Variable(lexemes, i);
+    while (lexemes[i] == Type::Comma) {
+        ++i;
+        Variable(lexemes, i);
+    }
+    if (lexemes[i] != Type::RightRoundBracket)
+        throw; // ќжидалась закр круг
+    ++i;
+}
+
+void Print(std::vector<Lexeme>& lexemes, int& i) {
+    if (lexemes[i].value_ != "print")
+        throw; // ќжидалось input
+    ++i;
+    if (lexemes[i] != Type::LeftRoundBracket)
+        throw; // ќжидалась кругл€ откр
+    ++i;
+    Expression(lexemes, i);
+    while (lexemes[i] == Type::Comma) {
+        ++i;
+        Expression(lexemes, i);
+    }
+    if (lexemes[i] != Type::RightRoundBracket)
+        throw; // ќжидалась закр круг
+    ++i;
+}
+
+void Return(std::vector<Lexeme>& lexemes, int& i) {
+    if (lexemes[i].value_ != "return")
+        throw; // ќжидалось input
+    ++i;
+    if (lexemes[i] != Type::LeftRoundBracket)
+        throw; // ќжидалась кругл€ откр
+    ++i;
+    Expression(lexemes, i);
+    if (lexemes[i] != Type::RightRoundBracket)
+        throw; // ќжидалась закр круг
+    ++i;
+}
+
 void Action(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] == Type::Special) {
         if (lexemes[i].value_ == "if") {
@@ -293,6 +383,27 @@ void Action(std::vector<Lexeme>& lexemes, int& i) {
         }
         if (lexemes[i].value_ == "for") {
             For(lexemes, i);
+            return;
+        }
+        if (lexemes[i].value_ == "input") {
+            Input(lexemes, i);
+            if (lexemes[i] != Type::Semicolon)
+                throw; // ќжидалась точка с зап€той
+            ++i;
+            return;
+        }
+        if (lexemes[i].value_ == "print") {
+            Print(lexemes, i);
+            if (lexemes[i] != Type::Semicolon)
+                throw; // ќжидалась точка с зап€той
+            ++i;
+            return;
+        }
+        if (lexemes[i].value_ == "return") {
+            Return(lexemes, i);
+            if (lexemes[i] != Type::Semicolon)
+                throw; // ќжидалась точка с зап€той
+            ++i;
             return;
         }
         NewVariable(lexemes, i);
@@ -322,7 +433,6 @@ void Action(std::vector<Lexeme>& lexemes, int& i) {
         }
         throw; // ќжидалс€ вызов или присваивание (1)
     }
-
     throw; // ќжидалось действие
 }
 
