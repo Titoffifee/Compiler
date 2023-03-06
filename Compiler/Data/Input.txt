@@ -5,7 +5,7 @@ int f(int a){
 
 int main() {
     int a = 5, b = 7;
-    for (int c = 0, d = 1.float y = 5; a < b; a += 1){
+    for (int c = 0, d = 1. float y = 5; a < b; a += 1){
 c %= 12;
 y += b / a + d;
 d += c - 1 + f(b);

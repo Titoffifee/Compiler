@@ -12,3 +12,4 @@ or
 void
 print
 input
+return
