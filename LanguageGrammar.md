@@ -23,7 +23,7 @@
 
 ***array indexes*** ::= '\[' \<expression> '\]' | '\[' \<expression> '\]' \<array indexes>
 
-***array init*** ::= \<name> \<array indexes>
+***array init*** ::= \<name> \<array indexes> ( '=' \<expression> )
 
 ***new variable*** ::= \<type> \<variable init> {',' \<variable init>} | 'array' '\<' \<type> '>' \<array init>  { ',' \<array init> }
 
@@ -63,9 +63,11 @@
 
 ***expression5*** ::= \<expression6> | '-' \<expression6> | '!' \<expression6> | '~' \<expression6>
 
-***expression6*** ::= '(' \<expression> ')' | \<variable> | \<number> | \<call function> | \<len>
+***expression6*** ::= '(' \<expression> ')' | \<variable> | \<number> | \<call function> | \<len> | \<deindexing of function>
 
 ***len*** ::= 'len' '(' \<name> \<array indexes> ')'
+
+***deindexing of function*** ::= \<call function> \<array indexes>
 
 ### Основные конструкции
 
