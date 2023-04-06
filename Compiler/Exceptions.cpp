@@ -97,3 +97,10 @@ void ExceptionType::print() {
     std::cout << "ќшибка в лексеме в строке " << lexeme_->line_ << ":\n";
     std::cout << "ќжидалс€ тип переменной вместо " << lexeme_->value_;
 }
+
+ExceptionArray::ExceptionArray(Lexeme* lexeme) :
+    Exception("", lexeme) {}
+void ExceptionArray::print() {
+    std::cout << "ќшибка в лексеме в строке " << lexeme_->line_ << ":\n";
+    std::cout << "ќжидалось ключевое слово array" << lexeme_->value_;
+}

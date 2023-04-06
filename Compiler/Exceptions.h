@@ -90,3 +90,9 @@ public:
     ExceptionType(Lexeme* lexeme);
     virtual void print();
 };
+
+class ExceptionArray : public Exception {
+public:
+    ExceptionArray(Lexeme* lexeme);
+    virtual void print();
+};

@@ -17,7 +17,11 @@
 
 ### Объявление переменных
 
-***type*** ::= 'int' | 'bool' | 'float' | array '\<' \<type> '>'
+***base type*** ::= 'int' | 'bool' | 'float'
+
+***array type*** ::= 'array' '\<' \<type> '>'
+
+***type*** ::= \<base type> | \<array type>
 
 ***variable init*** ::= \<name> ( '=' \<expression> )
 
@@ -25,7 +29,7 @@
 
 ***array init*** ::= \<name> \<array indexes> ( '=' \<expression> )
 
-***new variable*** ::= \<type> \<variable init> {',' \<variable init>} | 'array' '\<' \<type> '>' \<array init>  { ',' \<array init> }
+***new variable*** ::= \<base type> \<variable init> {',' \<variable init>} | \<array type> \<array init>  { ',' \<array init> }
 
 ### Синтаксис функций
 
@@ -45,6 +49,8 @@
 
 ***call function*** ::= \<name> '(' eps | ( \<expression> { ',' \<expression> } ) ')'
 
+***function value*** ::=  \<call function> | \<call function> \<array indexes>
+
 ***=*** ::= '=' | '+=' | '-=' | '\*=' | '/=' | %= | |= | &= | ^= 
 
 ***v*** ::= '=='  '!=' | '>' | '<' | '>=' | '<=' 
@@ -63,11 +69,9 @@
 
 ***expression5*** ::= \<expression6> | '-' \<expression6> | '!' \<expression6> | '~' \<expression6>
 
-***expression6*** ::= '(' \<expression> ')' | \<variable> | \<number> | \<call function> | \<len> | \<deindexing of function>
+***expression6*** ::= '(' \<expression> ')' | \<variable> | \<number> | \<function value> | \<len>
 
-***len*** ::= 'len' '(' \<name> \<array indexes> ')'
-
-***deindexing of function*** ::= \<call function> \<array indexes>
+***len*** ::= 'len' '(' \<name> ')' | 'len' '(' \<name> \<array indexes> ')' 
 
 ### Основные конструкции
 

@@ -11,28 +11,34 @@ void Expression5(std::vector<Lexeme>& lexemes, int& i);
 void Expression6(std::vector<Lexeme>& lexemes, int& i);
 void Equal(std::vector<Lexeme>& lexemes, int& i);
 void Block(std::vector<Lexeme>& lexemes, int& i);
+void type(std::vector<Lexeme>& lexemes, int& i);
 
 void BaseType(std::vector<Lexeme>& lexemes, int& i) {
-    if (lexemes[i] != Type::Special)
+    if (lexemes[i].value_ != "int"
+        && lexemes[i].value_ != "float"
+        && lexemes[i].value_ != "bool") 
         throw new ExceptionType(&lexemes[i]);
-    if (lexemes[i].value_ == "int" || lexemes[i].value_ == "bool" || lexemes[i].value_ == "float") {
-        ++i;
-        return;
-    }
-    if (lexemes[i].value_ == "array") {
-        ++i;
-        if (lexemes[i] == Type::LeftAngleBracket) {
-            ++i;
-            BaseType(lexemes, i);
-            if (lexemes[i] == Type::RightAngleBracket) {
-                ++i;
-                return;
-            }
-            throw new ExceptionRightAngleBracket(&lexemes[i]);
-        } 
+    ++i;
+}
+
+void ArrayType(std::vector<Lexeme>& lexemes, int& i) {
+    if (lexemes[i].value_ != "array") 
+        throw new ExceptionArray(&lexemes[i]);
+    ++i;
+    if (lexemes[i] != Type::LeftAngleBracket)
         throw new ExceptionLeftAngleBracket(&lexemes[i]);
-    }
-    throw new ExceptionType(&lexemes[i]);
+    ++i;
+    type(lexemes, i);
+    if (lexemes[i] != Type::RightAngleBracket)
+        throw new ExceptionRightAngleBracket(&lexemes[i]);
+    ++i;
+}
+
+void type(std::vector<Lexeme>& lexemes, int& i) {
+    if (lexemes[i].value_ == "array")
+        ArrayType(lexemes, i);
+    else
+        BaseType(lexemes, i);
 }
 
 void CallFunction(std::vector<Lexeme>& lexemes, int& i) {
@@ -68,6 +74,12 @@ void ArrayIndexes(std::vector<Lexeme>& lexemes, int& i) {
     }
 }
 
+void FunctionValue(std::vector<Lexeme>& lexemes, int& i) {
+    CallFunction(lexemes, i);
+    if (lexemes[i] == Type::LeftSquareBracket)
+        ArrayIndexes(lexemes, i);
+}
+
 void Variable(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] != Type::Ident)
         throw new ExceptionVariableName(&lexemes[i]);
@@ -87,7 +99,9 @@ void Len(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] != Type::Ident)
         throw new ExceptionVariableName(&lexemes[i]);
     ++i;
-    ArrayIndexes(lexemes, i);
+    if (lexemes[i] != Type::RightRoundBracket) {
+        ArrayIndexes(lexemes, i);
+    }
     if (lexemes[i] != Type::RightRoundBracket)
         throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
@@ -156,7 +170,7 @@ void Expression6(std::vector<Lexeme>& lexemes, int& i) {
     }
     if (lexemes[i] == Type::Ident) {
         if (lexemes[i + 1] == Type::LeftRoundBracket) {
-            CallFunction(lexemes, i);
+            FunctionValue(lexemes, i);
             return;
         } else {
             Variable(lexemes, i);
@@ -201,14 +215,7 @@ void ArrayInit(std::vector<Lexeme>& lexemes, int& i) {
 
 void NewVariable(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i].value_ == "array") {
-        ++i;
-        if (lexemes[i] != Type::LeftAngleBracket)
-            throw new ExceptionLeftAngleBracket(&lexemes[i]);
-        ++i;
-        BaseType(lexemes, i);
-        if (lexemes[i] != Type::RightAngleBracket)
-            throw new ExceptionRightAngleBracket(&lexemes[i]);
-        ++i;
+        ArrayType(lexemes, i);
         ArrayInit(lexemes, i);
         while (lexemes[i] == Type::Comma) {
             ++i;
@@ -446,11 +453,11 @@ void FunctionType(std::vector<Lexeme>& lexemes, int& i) {
         ++i;
         return;
     }
-    BaseType(lexemes, i);
+    type(lexemes, i);
 }
 
 void FunctionValue(std::vector<Lexeme>& lexemes, int& i) {
-    BaseType(lexemes, i);
+    type(lexemes, i);
     if (lexemes[i] != Type::Ident)
         throw new ExceptionVariableName(&lexemes[i]);
     ++i;
