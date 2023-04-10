@@ -49,7 +49,7 @@
 
 ***call function*** ::= \<name> '(' eps | ( \<expression> { ',' \<expression> } ) ')'
 
-***function value*** ::=  \<call function> | \<call function> \<array indexes>
+***function result*** ::=  \<call function> | \<call function> \<array indexes>
 
 ***=*** ::= '=' | '+=' | '-=' | '\*=' | '/=' | %= | |= | &= | ^= 
 
@@ -69,7 +69,7 @@
 
 ***expression5*** ::= \<expression6> | '-' \<expression6> | '!' \<expression6> | '~' \<expression6>
 
-***expression6*** ::= '(' \<expression> ')' | \<variable> | \<number> | \<function value> | \<len>
+***expression6*** ::= '(' \<expression> ')' | \<variable> | \<number> | \<function result> | \<len>
 
 ***len*** ::= 'len' '(' \<name> ')' | 'len' '(' \<name> \<array indexes> ')' 
 

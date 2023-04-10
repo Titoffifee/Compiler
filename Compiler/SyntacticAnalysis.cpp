@@ -74,7 +74,7 @@ void ArrayIndexes(std::vector<Lexeme>& lexemes, int& i) {
     }
 }
 
-void FunctionValue(std::vector<Lexeme>& lexemes, int& i) {
+void FunctionResult(std::vector<Lexeme>& lexemes, int& i) {
     CallFunction(lexemes, i);
     if (lexemes[i] == Type::LeftSquareBracket)
         ArrayIndexes(lexemes, i);
@@ -170,7 +170,7 @@ void Expression6(std::vector<Lexeme>& lexemes, int& i) {
     }
     if (lexemes[i] == Type::Ident) {
         if (lexemes[i + 1] == Type::LeftRoundBracket) {
-            FunctionValue(lexemes, i);
+            FunctionResult(lexemes, i);
             return;
         } else {
             Variable(lexemes, i);
