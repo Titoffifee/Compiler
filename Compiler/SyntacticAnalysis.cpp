@@ -371,6 +371,10 @@ void Return(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] != Type::LeftRoundBracket)
         throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
+    if (lexemes[i] == Type::RightRoundBracket) {
+        ++i;
+        return;
+    }
     Expression(lexemes, i);
     if (lexemes[i] != Type::RightRoundBracket)
         throw new ExceptionRightRoundBracket(&lexemes[i]);
