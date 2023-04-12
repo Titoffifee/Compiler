@@ -222,7 +222,7 @@ std::vector<Lexeme> LexicalAnalysis() {
     while (!code.eof()) {
         std::getline(code, crt);
         for (char c : crt) {
-            if (c != '  ') input += c;
+            if (c != '\t') input += c;
             else input += ' ';
         }
         input += '\n';
