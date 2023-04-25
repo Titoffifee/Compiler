@@ -1,31 +1,7 @@
 #pragma once
 #include <map>
 #include "LexicalAnalysis.h"
-#include "Exceptions.h"
-
-class ExceptionVariableRedeclaration : public Exception {
-public:
-    ExceptionVariableRedeclaration(Lexeme* lexeme);
-    virtual void print();
-};
-
-class ExceptionFunctionRedeclaration : public Exception {
-public:
-    ExceptionFunctionRedeclaration(Lexeme* lexeme);
-    virtual void print();
-};
-
-class ExceptionVariableUndeclared : public Exception {
-public:
-    ExceptionVariableUndeclared(Lexeme* lexeme);
-    virtual void print();
-};
-
-class ExceptionFunctionUndeclared : public Exception {
-public:
-    ExceptionFunctionUndeclared(Lexeme* lexeme);
-    virtual void print();
-};
+#include "ExceptionsSemantic.h"
 
 class VariableType;
 
@@ -33,18 +9,18 @@ class NameSpace {
 public:
     NameSpace(NameSpace* pr = nullptr);
     ~NameSpace();
-    void Add(Lexeme* lexeme_name, VariableType* type);
-    bool IsInSpace(std::string name);
-    VariableType* GetVariableType(Lexeme* lexeme_name);
+    void Add(Lexeme& lexeme_name, VariableType* type);
+    VariableType* GetVariableType(Lexeme& lexeme_name);
 private:
+    bool IsInSpace(std::string& name);
     std::map<std::string, VariableType*>names_;
     NameSpace* pr_;
 };
 
 enum class VariableTypes {
-    Int = 0,
+    Bool = 0,
+    Int,
     Float,
-    Bool,
     Array
 };
 
@@ -52,9 +28,15 @@ class VariableType {
 public:
     VariableType(VariableTypes type);
     VariableType(VariableType* next);
+    VariableType(Type type);
     ~VariableType();
     bool operator==(VariableType other);
     bool operator!=(VariableType other);
+    bool operator>(VariableType other);
+    bool IsBaseType();
+    bool IsArray();
+    VariableType* Next();
+    VariableType* GetFullCopy();
 private:
     VariableType* next_;
     VariableTypes type_;
@@ -79,7 +61,7 @@ public:
     void AddFunction(Lexeme* lexeme_name,
         VariableType* value_type, 
         FunctionParameter* parametr);
-    bool IsInSpace(std::string name);
+    // bool IsInSpace(std::string name);
     VariableType* GetFunctionType(Lexeme* lexeme_name);
     FunctionParameter* GetFunctionParametrs(Lexeme* lexeme_name);
 private:
@@ -87,3 +69,8 @@ private:
     std::map<std::string, FunctionParameter*>parametrs_;
     FunctionNameSpace* pr_;
 };
+
+VariableType* CheckBinExpression(VariableType* first, VariableType* second, int line);
+VariableType* CheckUnoExpression(VariableType* type, int line);
+VariableType* GetVariableType(Lexeme& variable_name, NameSpace* name_space);
+bool CanDoEqual(VariableType* left, VariableType* right);

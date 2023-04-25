@@ -1,4 +1,4 @@
-#include "Exceptions.h"
+#include "ExceptionsSyntactic.h"
 
 Exception::Exception(std::string text, Lexeme* lexeme):
     text_(text), lexeme_(lexeme) {}

@@ -27,7 +27,10 @@
     <ClCompile Include="SemanticAnalysis.cpp">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="Exceptions.cpp">
+    <ClCompile Include="ExceptionsSyntactic.cpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClCompile>
+    <ClCompile Include="ExceptionsSemantic.cpp">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
   </ItemGroup>
@@ -52,7 +55,10 @@
     <ClInclude Include="SemanticAnalysis.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Exceptions.h">
+    <ClInclude Include="ExceptionsSyntactic.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ExceptionsSemantic.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
