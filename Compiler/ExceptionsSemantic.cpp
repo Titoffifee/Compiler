@@ -59,3 +59,9 @@ ExceptionWaitingArray::ExceptionWaitingArray(Lexeme* lexeme) :
 void ExceptionWaitingArray::print() {
     std::cout << "Ошибка в строке " << lexeme_->line_ << ": Ожидался массив";
 }
+
+ExceptionActionWithVoidFunction::ExceptionActionWithVoidFunction(int line) :
+    Exception("", nullptr), line_(line) {}
+void ExceptionActionWithVoidFunction::print() {
+    std::cout << "Ошибка в строке " << line_ << ": операция с функцией типа 'void'";
+}

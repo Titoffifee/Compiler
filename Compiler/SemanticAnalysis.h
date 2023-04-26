@@ -25,15 +25,15 @@ enum class VariableTypes {
 };
 
 class VariableType {
+    friend bool TwoTypesEqual(VariableType* f, VariableType * s);
+    friend bool TwoTypesNotEqual(VariableType* f, VariableType* s);
+    friend bool FirstBiggerSecond(VariableType* f, VariableType* s);
 public:
     VariableType(VariableTypes type);
     VariableType(VariableType* next);
     VariableType(Lexeme& type);
     VariableType(Type type);
     ~VariableType();
-    bool operator==(VariableType other);
-    bool operator!=(VariableType other);
-    bool operator>(VariableType other);
     bool IsBaseType();
     bool IsArray();
     VariableType* Next();
@@ -44,12 +44,14 @@ private:
 };
 
 class FunctionParameter {
+    friend bool TwoParamsEqual(FunctionParameter* f, FunctionParameter* s);
+    friend bool TwoParamsNotEqual(FunctionParameter* f, FunctionParameter* s);
 public:
     FunctionParameter(VariableType* value, 
         FunctionParameter* next = nullptr);
     ~FunctionParameter();
-    bool operator==(FunctionParameter other);
-    bool operator!=(FunctionParameter other);
+    void AddToEnd(FunctionParameter* next);
+    void AddToEnd(VariableType* last);
 private:
     FunctionParameter* next_;
     VariableType* value_;
@@ -60,14 +62,14 @@ public:
     FunctionNameSpace(FunctionNameSpace* pr = nullptr);
     ~FunctionNameSpace();
     void AddFunction(Lexeme* lexeme_name,
-        VariableType* value_type, 
-        FunctionParameter* parametr);
-    // bool IsInSpace(std::string name);
-    VariableType* GetFunctionType(Lexeme* lexeme_name);
+        VariableType* return_value, 
+        FunctionParameter* parameters);
+    bool IsInSpace(std::string name);
+    VariableType* GetReturnValue(Lexeme* lexeme_name);
     FunctionParameter* GetFunctionParametrs(Lexeme* lexeme_name);
 private:
     std::map<std::string, VariableType*>return_value_;
-    std::map<std::string, FunctionParameter*>parametrs_;
+    std::map<std::string, FunctionParameter*>parameters_;
     FunctionNameSpace* pr_;
 };
 

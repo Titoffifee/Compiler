@@ -54,16 +54,19 @@ VariableType::~VariableType() {
         delete next_;
 }
 
-bool VariableType::operator==(VariableType other) {
-    if (type_ != other.type_)
-        return false;
-    return (next_ == other.next_ || (*next_) == (*other.next_));
+bool TwoTypesEqual(VariableType* f, VariableType* s) {
+    while (f != nullptr && s != nullptr) {
+        if (f->type_ != s->type_)
+            return false;
+        f = f->next_, s = s->next_;
+    }
+    return f == nullptr && s == nullptr;
 }
-bool VariableType::operator!=(VariableType other) {
-    return !(*this == other);
+bool TwoTypesNotEqual(VariableType* f, VariableType* s) {
+    return !TwoTypesEqual(f, s);
 }
-bool VariableType::operator>(VariableType other) {
-    return type_ > other.type_;
+bool FirstBiggerSecond(VariableType* f, VariableType* s) {
+    return f->type_ > s->type_;
 }
 
 bool VariableType::IsBaseType() {
@@ -90,13 +93,32 @@ FunctionParameter::~FunctionParameter() {
         delete next_;
 }
 
-bool FunctionParameter::operator==(FunctionParameter other) {
-    if (*value_ != *other.value_)
-        return false;
-    return next_ == other.next_ || *next_ == *other.next_;
+bool TwoParamsEqual(FunctionParameter* f, FunctionParameter* s) {
+    while (f != nullptr && s != nullptr) {
+        if (TwoTypesNotEqual(f->value_, s->value_))
+            return false;
+        f = f->next_, s = s->next_;
+    }
+    return f == nullptr && s == nullptr;
 }
-bool FunctionParameter::operator!=(FunctionParameter other) {
-    return !(*this == other);
+bool TwoParamsNotEqual(FunctionParameter* f, FunctionParameter* s) {
+    return !TwoParamsEqual(f, s);
+}
+
+
+void FunctionParameter::AddToEnd(FunctionParameter* next) {
+    if (next_ == nullptr) {
+        next_ = next;
+        return;
+    }
+    next_->AddToEnd(next);
+}
+void FunctionParameter::AddToEnd(VariableType* last) {
+    if (next_ == nullptr) {
+        next_ = new FunctionParameter(last);
+        return;
+    }
+    next_->AddToEnd(last);
 }
 
 FunctionNameSpace::FunctionNameSpace(FunctionNameSpace* pr): pr_(pr) {}
@@ -104,38 +126,43 @@ FunctionNameSpace::~FunctionNameSpace() {
     for (auto& el : return_value_) {
         delete el.second;
     }
-    for (auto& el : parametrs_) {
+    for (auto& el : parameters_) {
         delete el.second;
     }
 }
 void FunctionNameSpace::AddFunction(Lexeme* lexeme_name, 
-    VariableType* value_type, FunctionParameter* parametr) {
-
+    VariableType* return_value, FunctionParameter* parameters) {
+    if (IsInSpace(lexeme_name->value_))
+        throw new ExceptionFunctionRedeclaration(lexeme_name);
+    return_value_[lexeme_name->value_] = return_value;
+    parameters_[lexeme_name->value_] = parameters;
 }
-/*bool FunctionNameSpace::IsInSpace(std::string name) {
+bool FunctionNameSpace::IsInSpace(std::string name) {
     if (return_value_.find(name) != return_value_.end())
         return true;
     if (pr_ == nullptr)
         return false;
     return pr_->IsInSpace(name);
-}*/
-VariableType* FunctionNameSpace::GetFunctionType(Lexeme* lexeme_name) {
+}
+VariableType* FunctionNameSpace::GetReturnValue(Lexeme* lexeme_name) {
     if (return_value_.find(lexeme_name->value_) != return_value_.end())
         return return_value_[lexeme_name->value_];
     if (pr_ == nullptr)
         throw new ExceptionFunctionUndeclared(lexeme_name);
-    return pr_->GetFunctionType(lexeme_name);
+    return pr_->GetReturnValue(lexeme_name);
 }
 FunctionParameter* FunctionNameSpace::GetFunctionParametrs(Lexeme* lexeme_name) {
-    if (parametrs_.find(lexeme_name->value_) != parametrs_.end())
-        return parametrs_[lexeme_name->value_];
+    if (parameters_.find(lexeme_name->value_) != parameters_.end())
+        return parameters_[lexeme_name->value_];
     if (pr_ == nullptr)
         throw new ExceptionFunctionUndeclared(lexeme_name);
     return pr_->GetFunctionParametrs(lexeme_name);
 }
 
 VariableType* CheckBinExpression(VariableType* first, VariableType* second, int line) {
-    if (*second > *first)
+    if (first == nullptr || second == nullptr)
+        throw new ExceptionActionWithVoidFunction(line);
+    if (FirstBiggerSecond(second, first))
         std::swap(first, second);
     if (!first->IsBaseType())
         throw new ExceptionWrongExpressionType(line);
@@ -143,6 +170,8 @@ VariableType* CheckBinExpression(VariableType* first, VariableType* second, int 
     return first;
 }
 VariableType* CheckUnoExpression(VariableType* type, int line) {
+    if(type == nullptr)
+        throw new ExceptionActionWithVoidFunction(line);
     if (!type->IsBaseType())
         throw new ExceptionWrongExpressionType(line);
     return type;
@@ -151,12 +180,16 @@ VariableType* GetVariableType(Lexeme& variable_name, NameSpace* name_space) {
     return name_space->GetVariableType(variable_name)->GetFullCopy();
 }
 void CheckIsResultBasedAndDelete(VariableType* result, int line) {
+    if(result == nullptr)
+        throw new ExceptionActionWithVoidFunction(line);
     if (!result->IsBaseType())
         throw new ExceptionWrongExpressionResult(line);
     delete result;
 }
 void CheckCanDoEqual(VariableType* left, VariableType* right, int line) {
-    if ((left->IsBaseType() && right->IsBaseType()) || *left == *right) {
+    if(left == nullptr || right == nullptr)
+        throw new ExceptionActionWithVoidFunction(line);
+    if ((left->IsBaseType() && right->IsBaseType()) || TwoTypesEqual(left, right)) {
         delete right;
         return;
     }

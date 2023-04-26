@@ -67,3 +67,11 @@ public:
 private:
     int line_;
 };
+
+class ExceptionActionWithVoidFunction : public Exception {
+public:
+    ExceptionActionWithVoidFunction(int line);
+    virtual void print();
+private:
+    int line_;
+};
