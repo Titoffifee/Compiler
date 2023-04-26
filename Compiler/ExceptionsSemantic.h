@@ -44,6 +44,8 @@ class ExceptionWrongExpressionResult : public Exception {
 public:
     ExceptionWrongExpressionResult(int line);
     virtual void print();
+private:
+    int line_;
 };
 
 class ExceptionWaitingArray : public Exception {
@@ -52,14 +54,16 @@ public:
     virtual void print();
 };
 
-class ExceptionArrayIndexEnd :public Exception {
+class ExceptionArrayEnd : public Exception {
 public:
-    ExceptionArrayIndexEnd(Lexeme* lexeme);
+    ExceptionArrayEnd(Lexeme* lexeme);
     virtual void print();
 };
 
 class ExceptionArrayInitFinalCellNotBased : public Exception {
 public:
-    ExceptionArrayInitFinalCellNotBased(int line_);
+    ExceptionArrayInitFinalCellNotBased(int line);
     virtual void print();
+private:
+    int line_;
 };

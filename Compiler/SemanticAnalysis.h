@@ -28,6 +28,7 @@ class VariableType {
 public:
     VariableType(VariableTypes type);
     VariableType(VariableType* next);
+    VariableType(Lexeme& type);
     VariableType(Type type);
     ~VariableType();
     bool operator==(VariableType other);
@@ -73,4 +74,5 @@ private:
 VariableType* CheckBinExpression(VariableType* first, VariableType* second, int line);
 VariableType* CheckUnoExpression(VariableType* type, int line);
 VariableType* GetVariableType(Lexeme& variable_name, NameSpace* name_space);
-bool CanDoEqual(VariableType* left, VariableType* right);
+void CheckCanDoEqual(VariableType* left, VariableType* right, int line);
+void CheckIsResultBasedAndDelete(VariableType* result, int line);

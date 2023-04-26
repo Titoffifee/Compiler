@@ -35,3 +35,27 @@ ExceptionWrongExpressionType::ExceptionWrongExpressionType(int line) :
 void ExceptionWrongExpressionType::print() {
     std::cout << "Ошибка в строке " << line_ << ": " << "Неприводимый тип";
 }
+
+ExceptionWrongExpressionResult::ExceptionWrongExpressionResult(int line) :
+    Exception("", nullptr), line_(line) {}
+void ExceptionWrongExpressionResult::print() {
+    std::cout << "Ошибка в строке " << line_ << ": " << "Неправильный тип результата выражения";
+}
+
+ExceptionArrayInitFinalCellNotBased::ExceptionArrayInitFinalCellNotBased(int line) :
+    Exception("", nullptr), line_(line) {}
+void ExceptionArrayInitFinalCellNotBased::print() {
+    std::cout << "Ошибка в строке " << line_ << ": Полученный элемент массива не является базовым типом";
+}
+
+ExceptionArrayEnd::ExceptionArrayEnd(Lexeme* lexeme) :
+    Exception("", lexeme) {}
+void ExceptionArrayEnd::print() {
+    std::cout << "Ошибка в строке " << lexeme_->line_ << ": Количество индексов превышает размерность массива";
+}
+
+ExceptionWaitingArray::ExceptionWaitingArray(Lexeme* lexeme) :
+    Exception("", lexeme) {}
+void ExceptionWaitingArray::print() {
+    std::cout << "Ошибка в строке " << lexeme_->line_ << ": Ожидался массив";
+}

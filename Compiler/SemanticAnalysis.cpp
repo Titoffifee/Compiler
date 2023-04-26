@@ -33,7 +33,15 @@ VariableType::VariableType(VariableTypes type) :
     type_(type), next_(nullptr) {}
 VariableType::VariableType(VariableType* next) :
     type_(VariableTypes::Array), next_(next) {}
-VariableType::VariableType(Type type): next_(nullptr) {
+VariableType::VariableType(Lexeme& type): next_(nullptr) {
+    if (type.value_ == "int")
+        type_ = VariableTypes::Int;
+    else if (type.value_ == "float")
+        type_ = VariableTypes::Float;
+    else
+        type_ = VariableTypes::Bool;
+}
+VariableType::VariableType(Type type) : next_(nullptr) {
     if (type == Type::Int)
         type_ = VariableTypes::Int;
     else if (type == Type::Float)
@@ -67,6 +75,11 @@ bool VariableType::IsArray() {
 
 VariableType* VariableType::Next() {
     return next_;
+}
+VariableType* VariableType::GetFullCopy() {
+    if (type_ == VariableTypes::Array)
+        return new VariableType(next_->GetFullCopy());
+    return new VariableType(type_);
 }
 
 FunctionParameter::FunctionParameter(VariableType* value, FunctionParameter* next) :
@@ -135,5 +148,17 @@ VariableType* CheckUnoExpression(VariableType* type, int line) {
     return type;
 }
 VariableType* GetVariableType(Lexeme& variable_name, NameSpace* name_space) {
-    return name_space->GetVariableType(variable_name);
+    return name_space->GetVariableType(variable_name)->GetFullCopy();
+}
+void CheckIsResultBasedAndDelete(VariableType* result, int line) {
+    if (!result->IsBaseType())
+        throw new ExceptionWrongExpressionResult(line);
+    delete result;
+}
+void CheckCanDoEqual(VariableType* left, VariableType* right, int line) {
+    if ((left->IsBaseType() && right->IsBaseType()) || *left == *right) {
+        delete right;
+        return;
+    }
+    throw new ExceptionWrongExpressionResult(line);
 }

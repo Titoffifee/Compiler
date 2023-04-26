@@ -18,7 +18,7 @@ VariableType* BaseType(std::vector<Lexeme>& lexemes, int& i) {
         && lexemes[i].value_ != "float"
         && lexemes[i].value_ != "bool") 
         throw new ExceptionType(&lexemes[i]);
-    VariableType* t = new VariableType(lexemes[i].type_);
+    VariableType* t = new VariableType(lexemes[i]);
     ++i;
     return t;
 }
@@ -44,7 +44,8 @@ VariableType* type(std::vector<Lexeme>& lexemes, int& i) {
         return BaseType(lexemes, i);
 }
 
-VariableType* CallFunction(std::vector<Lexeme>& lexemes, int& i, NameSpace* name_space) {
+VariableType* CallFunction(std::vector<Lexeme>& lexemes, int& i, 
+    NameSpace* name_space) {
     if (lexemes[i] != Type::Ident)
         throw new ExceptionFunctionName(&lexemes[i]);
     ++i;
@@ -54,7 +55,7 @@ VariableType* CallFunction(std::vector<Lexeme>& lexemes, int& i, NameSpace* name
 
     if (lexemes[i] == Type::RightRoundBracket) {
         ++i;
-        return;
+        return nullptr;
     }
 
     Expression(lexemes, i, name_space);
@@ -65,9 +66,11 @@ VariableType* CallFunction(std::vector<Lexeme>& lexemes, int& i, NameSpace* name
     if (lexemes[i] != Type::RightRoundBracket)
         throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
+    return nullptr;
 }
 
-VariableType* ArrayIndexes(std::vector<Lexeme>& lexemes, int& i, NameSpace* name_space, VariableType* array_type) {
+VariableType* ArrayIndexes(std::vector<Lexeme>& lexemes, int& i, 
+    NameSpace* name_space, VariableType* array_type) {
     while (lexemes[i] == Type::LeftSquareBracket) {
         ++i;
         if (!Expression(lexemes, i, name_space)->IsBaseType())
@@ -76,7 +79,7 @@ VariableType* ArrayIndexes(std::vector<Lexeme>& lexemes, int& i, NameSpace* name
             throw new ExceptionRightSquareBracket(&lexemes[i]);
         array_type = array_type->Next();
         if (array_type == nullptr)
-            throw new ExceptionArrayIndexEnd(&lexemes[i]);
+            throw new ExceptionArrayEnd(&lexemes[i]);
         ++i;
     }
     return array_type->GetFullCopy();
@@ -91,10 +94,11 @@ VariableType* FunctionResult(std::vector<Lexeme>& lexemes, int& i, NameSpace* na
     }
     return result;
 }
+
 VariableType* Variable(std::vector<Lexeme>& lexemes, int& i, NameSpace* name_space) {
     if (lexemes[i] != Type::Ident)
         throw new ExceptionVariableName(&lexemes[i]);
-    VariableType* variable_type = GetVariableType(lexemes[i], name_space)->GetFullCopy();
+    VariableType* variable_type = GetVariableType(lexemes[i], name_space);
     ++i;
     if (lexemes[i] == Type::LeftSquareBracket) {
         VariableType* correct_variable_type = ArrayIndexes(lexemes, i, name_space, variable_type);
@@ -120,11 +124,15 @@ void Len(std::vector<Lexeme>& lexemes, int& i, NameSpace* name_space) {
         if (!correct_type->IsArray())
             throw new ExceptionWaitingArray(&lexemes[i]);
         delete correct_type;
+    } else {
+        if (!array_type->IsArray())
+            throw new ExceptionWaitingArray(&lexemes[i]);
     }
     if (lexemes[i] != Type::RightRoundBracket)
         throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
 }
+
 VariableType* Expression0(std::vector<Lexeme>& lexemes, int& i, NameSpace* name_space) {
     VariableType* expression_type = Expression1(lexemes, i, name_space);
     while (lexemes[i].value_ == "or") {
@@ -177,7 +185,7 @@ VariableType* Expression4(std::vector<Lexeme>& lexemes, int& i, NameSpace* name_
     return expression_type;
 }
 VariableType* Expression5(std::vector<Lexeme>& lexemes, int& i, NameSpace* name_space) {
-    if (lexemes[i].value_ != "-" && lexemes[i].value_ == "!" && lexemes[i].value_ == "~") {
+    if (lexemes[i].value_ != "-" && lexemes[i].value_ != "!" && lexemes[i].value_ != "~") {
         return Expression6(lexemes, i, name_space);
     }
     ++i;
@@ -210,7 +218,6 @@ VariableType* Expression6(std::vector<Lexeme>& lexemes, int& i, NameSpace* name_
     }
     throw new Exception("Неправильное выражение", &lexemes[i]);
 }
-
 VariableType* Expression(std::vector<Lexeme>& lexemes, int& i, NameSpace* name_space) {
     VariableType* expression_type = Expression0(lexemes, i, name_space);
     while (lexemes[i].value_ == "and") {
@@ -225,11 +232,8 @@ void Equal(std::vector<Lexeme>& lexemes, int& i, NameSpace* name_space) {
     if (lexemes[i] != Type::Equal)
         throw new ExceptionSpecial("=", &lexemes[i]);
     ++i;
-    VariableType* expression_type = Expression(lexemes, i, name_space);
-    if (!CanDoEqual(variable_type, expression_type))
-        throw new ExceptionWrongExpressionResult(lexemes[i].line_);
+    CheckCanDoEqual(variable_type, Expression(lexemes, i, name_space), lexemes[i].line_);
     delete variable_type;
-    delete expression_type;
 }
 
 void VariableInit(std::vector<Lexeme>& lexemes, int& i, 
@@ -240,8 +244,7 @@ void VariableInit(std::vector<Lexeme>& lexemes, int& i,
     ++i;
     if (lexemes[i] == Type::Equal) {
         ++i;
-        if (!CanDoEqual(variable_type, Expression(lexemes, i, name_space)))
-            throw new ExceptionWrongExpressionResult(lexemes[i].line_);
+        CheckCanDoEqual(variable_type, Expression(lexemes, i, name_space), lexemes[i].line_);
     }
 }
 
@@ -257,8 +260,7 @@ void ArrayInit(std::vector<Lexeme>& lexemes, int& i,
     delete final_cell;
     if (lexemes[i] == Type::Equal) {
         ++i;
-        if (!CanDoEqual(array_type, Expression(lexemes, i, name_space)))
-            throw new ExceptionWrongExpressionResult(lexemes[i].line_);
+        CheckCanDoEqual(array_type, Expression(lexemes, i, name_space), lexemes[i].line_);
     }
 }
 
@@ -292,7 +294,7 @@ void If(std::vector<Lexeme>& lexemes, int& i,
     ++i;
     VariableType* expression_type = Expression(lexemes, i, name_space);
     if (!expression_type->IsBaseType())
-        throw new ExceptionWrongExpressionResult();
+        throw new ExceptionWrongExpressionResult(lexemes[i].line_);
     delete expression_type;
     if (lexemes[i] != Type::RightRoundBracket)
         throw new ExceptionRightRoundBracket(&lexemes[i]);
@@ -316,7 +318,7 @@ void If(std::vector<Lexeme>& lexemes, int& i,
     }
 }
 
-void While(std::vector<Lexeme>& lexemes, int& i, 
+void While(std::vector<Lexeme>& lexemes, int& i,
     NameSpace* name_space) {
     if (lexemes[i].value_ != "while")
         throw new ExceptionSpecial("while", &lexemes[i]);
@@ -326,7 +328,7 @@ void While(std::vector<Lexeme>& lexemes, int& i,
     ++i;
     VariableType* expression_type = Expression(lexemes, i, name_space);
     if (!expression_type->IsBaseType())
-        throw new ExceptionWrongExpressionResult();
+        throw new ExceptionWrongExpressionResult(lexemes[i].line_);
     delete expression_type;
     if (lexemes[i] != Type::RightRoundBracket)
         throw new ExceptionRightRoundBracket(&lexemes[i]);
@@ -340,15 +342,17 @@ void While(std::vector<Lexeme>& lexemes, int& i,
     ++i;
 }
 
-void ForVariableInit(std::vector<Lexeme>& lexemes, int& i) {
-    NewVariable(lexemes, i);
+void ForVariableInit(std::vector<Lexeme>& lexemes, int& i,
+    NameSpace* name_space) {
+    NewVariable(lexemes, i, name_space);
     while (lexemes[i] == Type::Dot) {
         ++i;
-        NewVariable(lexemes, i);
+        NewVariable(lexemes, i, name_space);
     }
 }
 
-void For(std::vector<Lexeme>& lexemes, int& i) {
+void For(std::vector<Lexeme>& lexemes, int& i,
+    NameSpace* name_space) {
     if (lexemes[i].value_ != "for")
         throw new ExceptionSpecial("for", &lexemes[i]);
     ++i;
@@ -357,22 +361,22 @@ void For(std::vector<Lexeme>& lexemes, int& i) {
     ++i;
 
     if (lexemes[i] != Type::Semicolon) {
-        ForVariableInit(lexemes, i);
+        ForVariableInit(lexemes, i, name_space);
     }
     if (lexemes[i] != Type::Semicolon)
         throw new ExceptionSemicolon(&lexemes[i]);
     ++i;
 
-    Expression(lexemes, i);
+    CheckIsResultBasedAndDelete(Expression(lexemes, i, name_space), lexemes[i].line_);
     if (lexemes[i] != Type::Semicolon)
         throw new ExceptionSemicolon(&lexemes[i]);
     ++i;
 
     if (lexemes[i] != Type::RightRoundBracket) {
-        Equal(lexemes, i);
+        Equal(lexemes, i, name_space);
         while (lexemes[i] == Type::Semicolon) {
             ++i;
-            Equal(lexemes, i);
+            Equal(lexemes, i, name_space);
         }
     }
 
@@ -383,47 +387,50 @@ void For(std::vector<Lexeme>& lexemes, int& i) {
     if (lexemes[i] != Type::LeftBrace)
         throw new ExceptionLeftBrace(&lexemes[i]);
     ++i;
-    Block(lexemes, i);
+    Block(lexemes, i, name_space);
     if (lexemes[i] != Type::RightBrace)
         throw new ExceptionRightBrace(&lexemes[i]);
     ++i;
 }
 
-void Input(std::vector<Lexeme>& lexemes, int& i) {
+void Input(std::vector<Lexeme>& lexemes, int& i,
+    NameSpace* name_space) {
     if (lexemes[i].value_ != "input")
         throw new ExceptionSpecial("input", &lexemes[i]);
     ++i;
     if (lexemes[i] != Type::LeftRoundBracket)
         throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
-    Variable(lexemes, i);
+    CheckIsResultBasedAndDelete(Variable(lexemes, i, name_space), lexemes[i].line_);
     while (lexemes[i] == Type::Comma) {
         ++i;
-        Variable(lexemes, i);
+        CheckIsResultBasedAndDelete(Variable(lexemes, i, name_space), lexemes[i].line_);
     }
     if (lexemes[i] != Type::RightRoundBracket)
         throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
 }
 
-void Print(std::vector<Lexeme>& lexemes, int& i) {
+void Print(std::vector<Lexeme>& lexemes, int& i,
+    NameSpace* name_space) {
     if (lexemes[i].value_ != "print")
         throw new ExceptionSpecial("print", &lexemes[i]);
     ++i;
     if (lexemes[i] != Type::LeftRoundBracket)
         throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
-    Expression(lexemes, i);
+    CheckIsResultBasedAndDelete(Expression(lexemes, i, name_space), lexemes[i].line_);
     while (lexemes[i] == Type::Comma) {
         ++i;
-        Expression(lexemes, i);
+        CheckIsResultBasedAndDelete(Expression(lexemes, i, name_space), lexemes[i].line_);
     }
     if (lexemes[i] != Type::RightRoundBracket)
         throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
 }
 
-void Return(std::vector<Lexeme>& lexemes, int& i) {
+void Return(std::vector<Lexeme>& lexemes, int& i,
+    NameSpace* name_space) {
     if (lexemes[i].value_ != "return")
         throw new ExceptionSpecial("return", &lexemes[i]);
     ++i;
@@ -434,48 +441,50 @@ void Return(std::vector<Lexeme>& lexemes, int& i) {
         ++i;
         return;
     }
-    Expression(lexemes, i);
+    // TODO: контроль нормальности возврата через CanDoEqual
+    Expression(lexemes, i, name_space);
     if (lexemes[i] != Type::RightRoundBracket)
         throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
 }
 
-void Action(std::vector<Lexeme>& lexemes, int& i, NameSpace* name_space) {
+void Action(std::vector<Lexeme>& lexemes, int& i,
+    NameSpace* name_space) {
     if (lexemes[i] == Type::Special) {
         if (lexemes[i].value_ == "if") {
             If(lexemes, i, name_space);
             return;
         }
         if (lexemes[i].value_ == "while") {
-            While(lexemes, i);
+            While(lexemes, i, name_space);
             return;
         }
         if (lexemes[i].value_ == "for") {
-            For(lexemes, i);
+            For(lexemes, i, name_space);
             return;
         }
         if (lexemes[i].value_ == "input") {
-            Input(lexemes, i);
+            Input(lexemes, i, name_space);
             if (lexemes[i] != Type::Semicolon)
                 throw new ExceptionSemicolon(&lexemes[i]);
             ++i;
             return;
         }
         if (lexemes[i].value_ == "print") {
-            Print(lexemes, i);
+            Print(lexemes, i, name_space);
             if (lexemes[i] != Type::Semicolon)
                 throw new ExceptionSemicolon(&lexemes[i]);
             ++i;
             return;
         }
         if (lexemes[i].value_ == "return") {
-            Return(lexemes, i);
+            Return(lexemes, i, name_space);
             if (lexemes[i] != Type::Semicolon)
                 throw new ExceptionSemicolon(&lexemes[i]);
             ++i;
             return;
         }
-        NewVariable(lexemes, i);
+        NewVariable(lexemes, i, name_space);
         if (lexemes[i] != Type::Semicolon)
             throw new ExceptionSemicolon(&lexemes[i]);
         ++i;
@@ -483,24 +492,18 @@ void Action(std::vector<Lexeme>& lexemes, int& i, NameSpace* name_space) {
     }
     
     if (lexemes[i] == Type::Ident) {
-        int protected_i = i;
-        Variable(lexemes, i);
-        if (lexemes[i] == Type::Equal) {
-            i = protected_i;
-            Equal(lexemes, i);
+        if (lexemes[i + 1] == Type::LeftRoundBracket) {
+            CallFunction(lexemes, i, name_space);
             if (lexemes[i] != Type::Semicolon)
                 throw new ExceptionSemicolon(&lexemes[i]);
             ++i;
-            return;
         } else {
-            i = protected_i;
-            CallFunction(lexemes, i);
+            Equal(lexemes, i, name_space);
             if (lexemes[i] != Type::Semicolon)
                 throw new ExceptionSemicolon(&lexemes[i]);
             ++i;
-            return;
         }
-        throw new Exception(std::string("Ожидалось присваивание или вызов функции"), &lexemes[i]);
+        // throw new Exception(std::string("Ожидалось присваивание или вызов функции"), &lexemes[i]);
     }
     throw new Exception(std::string("Ожидалось какое-то действие"), &lexemes[i]);
 }
