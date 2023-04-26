@@ -105,7 +105,6 @@ bool TwoParamsNotEqual(FunctionParameter* f, FunctionParameter* s) {
     return !TwoParamsEqual(f, s);
 }
 
-
 void FunctionParameter::AddToEnd(FunctionParameter* next) {
     if (next_ == nullptr) {
         next_ = next;

@@ -452,6 +452,8 @@ void Print(std::vector<Lexeme>& lexemes, int& i,
     ++i;
 }
 
+VariableType* current_return_value = nullptr;
+
 void Return(std::vector<Lexeme>& lexemes, int& i,
     NameSpace* name_space, FunctionNameSpace* function_name_space) {
     if (lexemes[i].value_ != "return")
@@ -464,8 +466,7 @@ void Return(std::vector<Lexeme>& lexemes, int& i,
         ++i;
         return;
     }
-    // TODO: контроль нормальности возврата через CanDoEqual
-    Expression(lexemes, i, name_space, function_name_space);
+    CheckCanDoEqual(current_return_value, Expression(lexemes, i, name_space, function_name_space), lexemes[i].line_);
     if (lexemes[i] != Type::RightRoundBracket)
         throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
@@ -604,6 +605,7 @@ void Function(std::vector<Lexeme>& lexemes, int& i,
         throw new ExceptionLeftBrace(&lexemes[i]);
     }
     ++i;
+    current_return_value = return_value;
     Block(lexemes, i, name_space, function_name_space);
     if (lexemes[i] != Type::RightBrace) {
         throw new ExceptionRightBrace(&lexemes[i]);
