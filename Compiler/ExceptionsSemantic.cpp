@@ -24,12 +24,6 @@ void ExceptionFunctionUndeclared::print() {
     std::cout << "Необъявленная функция " << '"' << lexeme_->value_ << '"' << " в строке " << lexeme_->line_;
 }
 
-ExceptionOperator::ExceptionOperator(bool turn, Lexeme* lexeme) :
-    Exception((turn ? "справа" : "слева"), lexeme) {}
-void ExceptionOperator::print_turn() {
-    std::cout << ' ' << text_ << " от оператора " << lexeme_->value_;
-}
-
 ExceptionWrongExpressionType::ExceptionWrongExpressionType(int line) :
     Exception("", nullptr), line_(line) {}
 void ExceptionWrongExpressionType::print() {
@@ -42,9 +36,9 @@ void ExceptionWrongExpressionResult::print() {
     std::cout << "Ошибка в строке " << line_ << ": " << "Неправильный тип результата выражения";
 }
 
-ExceptionArrayInitFinalCellNotBased::ExceptionArrayInitFinalCellNotBased(int line) :
+ExceptionArrayInitFinalCellNotBasic::ExceptionArrayInitFinalCellNotBasic(int line) :
     Exception("", nullptr), line_(line) {}
-void ExceptionArrayInitFinalCellNotBased::print() {
+void ExceptionArrayInitFinalCellNotBasic::print() {
     std::cout << "Ошибка в строке " << line_ << ": Полученный элемент массива не является базовым типом";
 }
 

@@ -9,6 +9,7 @@ public:
     Exception(std::string text, Lexeme* lexeme);
     virtual ~Exception() {}
     virtual void print();
+protected:
     std::string text_;
     Lexeme* lexeme_;
 };

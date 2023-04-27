@@ -276,7 +276,7 @@ void ArrayInit(std::vector<Lexeme>& lexemes, int& i,
     ++i;
     VariableType* final_cell = ArrayIndexes(lexemes, i, name_space, function_name_space, array_type);
     if (!final_cell->IsBasicType())
-        throw new ExceptionArrayInitFinalCellNotBased(lexemes[i].line_);
+        throw new ExceptionArrayInitFinalCellNotBasic(lexemes[i].line_);
     delete final_cell;
     if (lexemes[i] == Type::Equal) {
         ++i;

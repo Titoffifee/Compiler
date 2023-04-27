@@ -9,9 +9,10 @@ array<int> f(int n){
 }
 
 int main() {
-    array<int>a[5];
-	a = f(5);
-	bool c = 97;
-	print(a[4]);
+    array<int>i[5];
+	for(int i = 0; i<5; i += 1){
+		i = f(i);
+	}
+	print(5);
 	return (0);
 }

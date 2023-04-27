@@ -8,7 +8,7 @@ NameSpace::~NameSpace() {
 }
 
 void NameSpace::Add(Lexeme& lexeme_name, VariableType* type) {
-    if (IsInSpace(lexeme_name.value_))
+    if (names_.find(lexeme_name.value_) != names_.end())
         throw new ExceptionVariableRedeclaration(&lexeme_name);
     names_[lexeme_name.value_] = type;
 }
@@ -54,9 +54,22 @@ VariableType::~VariableType() {
         delete next_;
 }
 
+bool IsVariableTypesEqual(VariableTypes f, VariableTypes s) {
+    return (f == s) ||
+        (f == VariableTypes::Bool
+            || f == VariableTypes::Int
+            || f == VariableTypes::Float)
+        && (s == VariableTypes::Bool
+            || s == VariableTypes::Int
+            || s == VariableTypes::Float);
+}
+bool IsVariableTypesNotEqual(VariableTypes f, VariableTypes s) {
+    return !IsVariableTypesEqual(f, s);
+}
+
 bool TwoTypesEqual(VariableType* f, VariableType* s) {
     while (f != nullptr && s != nullptr) {
-        if (f->type_ != s->type_)
+        if (IsVariableTypesNotEqual(f->type_, s->type_))
             return false;
         f = f->next_, s = s->next_;
     }
@@ -129,9 +142,9 @@ FunctionNameSpace::~FunctionNameSpace() {
         delete el.second;
     }
 }
-void FunctionNameSpace::AddFunction(Lexeme* lexeme_name, 
+void FunctionNameSpace::AddFunction(Lexeme* lexeme_name,
     VariableType* return_value, FunctionParameter* parameters) {
-    if (IsInSpace(lexeme_name->value_))
+    if (return_value_.find(lexeme_name->value_) != return_value_.end())
         throw new ExceptionFunctionRedeclaration(lexeme_name);
     return_value_[lexeme_name->value_] = return_value;
     parameters_[lexeme_name->value_] = parameters;

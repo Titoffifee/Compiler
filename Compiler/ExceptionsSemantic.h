@@ -25,13 +25,6 @@ public:
     virtual void print();
 };
 
-class ExceptionOperator :public Exception {
-public:
-    ExceptionOperator(bool turn, Lexeme* lexeme);
-protected:
-    void print_turn();
-};
-
 class ExceptionWrongExpressionType : public Exception {
 public:
     ExceptionWrongExpressionType(int line);
@@ -60,9 +53,9 @@ public:
     virtual void print();
 };
 
-class ExceptionArrayInitFinalCellNotBased : public Exception {
+class ExceptionArrayInitFinalCellNotBasic : public Exception {
 public:
-    ExceptionArrayInitFinalCellNotBased(int line);
+    ExceptionArrayInitFinalCellNotBasic(int line);
     virtual void print();
 private:
     int line_;
