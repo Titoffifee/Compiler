@@ -36,6 +36,10 @@ void String(std::string& code, int& it, std::vector <Lexeme>& lexemes, std::vect
         value += code[it++];
     }
     --it;
+    if (value == "false" || value == "true") {
+        lexemes.push_back(Lexeme(Type::Bool, line, value));
+        return;
+    }
     if (IsSpecial(value, special)) {
         lexemes.push_back(Lexeme(Type::Special, line, value));
     } else {
@@ -45,15 +49,6 @@ void String(std::string& code, int& it, std::vector <Lexeme>& lexemes, std::vect
 
 void Number(std::string& code, int& it, std::vector <Lexeme>& lexemes, int line) {
     std::string crt = "";
-    if ((code[it + 1] < '0' || '9' < code[it + 1]) && (code[it + 1] != '.' || code[it + 2] < '0' || '9' < code[it + 2])) {
-        crt += code[it];
-        if (code[it] == '0' || code[it] == '1') {
-            lexemes.push_back(Lexeme(Type::Bool, line, crt));
-            return;
-        }
-        lexemes.push_back(Lexeme(Type::Int, line, crt));
-        return;
-    }
     while ('0' <= code[it] && code[it] <= '9') {
         crt += code[it++];
     }
@@ -207,8 +202,18 @@ void Split(std::string& code, int it, std::vector <Lexeme>& lexemes, std::vector
                 String(code, it, lexemes, special, line);
                 ++it;
             } else {
-                std::cout << code[it] << ' ' << it << '\n';
-                throw "something";
+                std::string error = "Символ ";
+                error += code[it];
+                error += " в строке ";
+                std::string ln = "";
+                while (line) {
+                    ln += '0' + line % 10;
+                    line /= 10;
+                }
+                std::reverse(ln.begin(), ln.end());
+                error += ln;
+                error += " не поддерживается грамматикой";
+                throw error;
             }
         }
     }

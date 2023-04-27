@@ -1,20 +1,17 @@
-int f(int n) {
+array<int> f(int n){
 	array<int>b[7];
 	b[0] = 1;
 	b[1] = 1;
 	for(int i = 2; i < n; i += 1){
 		b[i] += b[i-1] + b[i-2];
 	}
-	return (1);
+	return (b);
 }
 
-
 int main() {
-    array<int> a[5];
-	int x = 2 + 1 / 0;
-	for(int i = 1; i<5; i += 1) {
-		input(a[i]);
-	}
-	
+    array<int>a[5];
+	a = f(5);
+	bool c = 97;
+	print(a[4]);
 	return (0);
 }
