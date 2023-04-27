@@ -11,6 +11,7 @@ array<int> f(int n){
 int main() {
     array<int>a[5];
 	a = f(5);
+	bool c = 97;
 	print(a[4]);
 	return (0);
 }
