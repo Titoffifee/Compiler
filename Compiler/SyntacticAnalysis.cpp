@@ -81,7 +81,7 @@ VariableType* ArrayIndexes(std::vector<Lexeme>& lexemes, int& i,
     NameSpace* name_space, FunctionNameSpace* function_name_space, VariableType* array_type) {
     while (lexemes[i] == Type::LeftSquareBracket) {
         ++i;
-        if (!Expression(lexemes, i, name_space, function_name_space)->IsBaseType())
+        if (!Expression(lexemes, i, name_space, function_name_space)->IsBasicType())
             throw new ExceptionWrongExpressionResult(lexemes[i].line_);
         if (lexemes[i] != Type::RightSquareBracket)
             throw new ExceptionRightSquareBracket(&lexemes[i]);
@@ -161,7 +161,7 @@ VariableType* Expression1(std::vector<Lexeme>& lexemes, int& i,
         || lexemes[i].value_ == "!=" || lexemes[i].value_ == "=="
         || lexemes[i].value_ == ">=" || lexemes[i].value_ == "<=") {
         ++i;
-        if (!expression_type->IsBaseType())
+        if (!expression_type->IsBasicType())
             throw new ExceptionWrongExpressionType(lexemes[i].line_);
         expression_type = CheckBinExpression(expression_type,
             Expression2(lexemes, i, name_space, function_name_space), lexemes[i].line_);
@@ -275,7 +275,7 @@ void ArrayInit(std::vector<Lexeme>& lexemes, int& i,
     name_space->Add(lexemes[i], array_type);
     ++i;
     VariableType* final_cell = ArrayIndexes(lexemes, i, name_space, function_name_space, array_type);
-    if (!final_cell->IsBaseType())
+    if (!final_cell->IsBasicType())
         throw new ExceptionArrayInitFinalCellNotBased(lexemes[i].line_);
     delete final_cell;
     if (lexemes[i] == Type::Equal) {
@@ -314,7 +314,7 @@ void If(std::vector<Lexeme>& lexemes, int& i,
         throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
     VariableType* expression_type = Expression(lexemes, i, name_space, function_name_space);
-    if (!expression_type->IsBaseType())
+    if (!expression_type->IsBasicType())
         throw new ExceptionWrongExpressionResult(lexemes[i].line_);
     delete expression_type;
     if (lexemes[i] != Type::RightRoundBracket)
@@ -348,7 +348,7 @@ void While(std::vector<Lexeme>& lexemes, int& i,
         throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
     VariableType* expression_type = Expression(lexemes, i, name_space, function_name_space);
-    if (!expression_type->IsBaseType())
+    if (!expression_type->IsBasicType())
         throw new ExceptionWrongExpressionResult(lexemes[i].line_);
     delete expression_type;
     if (lexemes[i] != Type::RightRoundBracket)
@@ -389,7 +389,7 @@ void For(std::vector<Lexeme>& lexemes, int& i,
         throw new ExceptionSemicolon(&lexemes[i]);
     ++i;
 
-    CheckIsResultBasedAndDelete(Expression(lexemes, i, name_space, function_name_space), lexemes[i].line_);
+    CheckIsResultBasicAndDelete(Expression(lexemes, i, name_space, function_name_space), lexemes[i].line_);
     if (lexemes[i] != Type::Semicolon)
         throw new ExceptionSemicolon(&lexemes[i]);
     ++i;
@@ -424,10 +424,10 @@ void Input(std::vector<Lexeme>& lexemes, int& i,
     if (lexemes[i] != Type::LeftRoundBracket)
         throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
-    CheckIsResultBasedAndDelete(Variable(lexemes, i, name_space, function_name_space), lexemes[i].line_);
+    CheckIsResultBasicAndDelete(Variable(lexemes, i, name_space, function_name_space), lexemes[i].line_);
     while (lexemes[i] == Type::Comma) {
         ++i;
-        CheckIsResultBasedAndDelete(Variable(lexemes, i, name_space, function_name_space), lexemes[i].line_);
+        CheckIsResultBasicAndDelete(Variable(lexemes, i, name_space, function_name_space), lexemes[i].line_);
     }
     if (lexemes[i] != Type::RightRoundBracket)
         throw new ExceptionRightRoundBracket(&lexemes[i]);
@@ -442,10 +442,10 @@ void Print(std::vector<Lexeme>& lexemes, int& i,
     if (lexemes[i] != Type::LeftRoundBracket)
         throw new ExceptionLeftRoundBracket(&lexemes[i]);
     ++i;
-    CheckIsResultBasedAndDelete(Expression(lexemes, i, name_space, function_name_space), lexemes[i].line_);
+    CheckIsResultBasicAndDelete(Expression(lexemes, i, name_space, function_name_space), lexemes[i].line_);
     while (lexemes[i] == Type::Comma) {
         ++i;
-        CheckIsResultBasedAndDelete(Expression(lexemes, i, name_space, function_name_space), lexemes[i].line_);
+        CheckIsResultBasicAndDelete(Expression(lexemes, i, name_space, function_name_space), lexemes[i].line_);
     }
     if (lexemes[i] != Type::RightRoundBracket)
         throw new ExceptionRightRoundBracket(&lexemes[i]);

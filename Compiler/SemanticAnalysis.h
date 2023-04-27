@@ -3,20 +3,6 @@
 #include "LexicalAnalysis.h"
 #include "ExceptionsSemantic.h"
 
-class VariableType;
-
-class NameSpace {
-public:
-    NameSpace(NameSpace* pr = nullptr);
-    ~NameSpace();
-    void Add(Lexeme& lexeme_name, VariableType* type);
-    VariableType* GetVariableType(Lexeme& lexeme_name);
-private:
-    bool IsInSpace(std::string& name);
-    std::map<std::string, VariableType*>names_;
-    NameSpace* pr_;
-};
-
 enum class VariableTypes {
     Bool = 0,
     Int,
@@ -34,13 +20,25 @@ public:
     VariableType(Lexeme& type);
     VariableType(Type type);
     ~VariableType();
-    bool IsBaseType();
+    bool IsBasicType();
     bool IsArray();
     VariableType* Next();
     VariableType* GetFullCopy();
 private:
     VariableType* next_;
     VariableTypes type_;
+};
+
+class NameSpace {
+public:
+    NameSpace(NameSpace* pr = nullptr);
+    ~NameSpace();
+    void Add(Lexeme& lexeme_name, VariableType* type);
+    VariableType* GetVariableType(Lexeme& lexeme_name);
+private:
+    bool IsInSpace(std::string& name);
+    std::map<std::string, VariableType*>names_;
+    NameSpace* pr_;
 };
 
 class FunctionParameter {
@@ -77,4 +75,4 @@ VariableType* CheckBinExpression(VariableType* first, VariableType* second, int 
 VariableType* CheckUnoExpression(VariableType* type, int line);
 VariableType* GetVariableType(Lexeme& variable_name, NameSpace* name_space);
 void CheckCanDoEqual(VariableType* left, VariableType* right, int line);
-void CheckIsResultBasedAndDelete(VariableType* result, int line);
+void CheckIsResultBasicAndDelete(VariableType* result, int line);

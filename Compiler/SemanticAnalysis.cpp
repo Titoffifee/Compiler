@@ -69,7 +69,7 @@ bool FirstBiggerSecond(VariableType* f, VariableType* s) {
     return f->type_ > s->type_;
 }
 
-bool VariableType::IsBaseType() {
+bool VariableType::IsBasicType() {
     return type_ == VariableTypes::Int || type_ == VariableTypes::Float || type_ == VariableTypes::Bool;
 }
 bool VariableType::IsArray() {
@@ -163,7 +163,7 @@ VariableType* CheckBinExpression(VariableType* first, VariableType* second, int 
         throw new ExceptionActionWithVoidFunction(line);
     if (FirstBiggerSecond(second, first))
         std::swap(first, second);
-    if (!first->IsBaseType())
+    if (!first->IsBasicType())
         throw new ExceptionWrongExpressionType(line);
     delete second;
     return first;
@@ -171,24 +171,24 @@ VariableType* CheckBinExpression(VariableType* first, VariableType* second, int 
 VariableType* CheckUnoExpression(VariableType* type, int line) {
     if(type == nullptr)
         throw new ExceptionActionWithVoidFunction(line);
-    if (!type->IsBaseType())
+    if (!type->IsBasicType())
         throw new ExceptionWrongExpressionType(line);
     return type;
 }
 VariableType* GetVariableType(Lexeme& variable_name, NameSpace* name_space) {
     return name_space->GetVariableType(variable_name)->GetFullCopy();
 }
-void CheckIsResultBasedAndDelete(VariableType* result, int line) {
+void CheckIsResultBasicAndDelete(VariableType* result, int line) {
     if(result == nullptr)
         throw new ExceptionActionWithVoidFunction(line);
-    if (!result->IsBaseType())
+    if (!result->IsBasicType())
         throw new ExceptionWrongExpressionResult(line);
     delete result;
 }
 void CheckCanDoEqual(VariableType* left, VariableType* right, int line) {
     if(left == nullptr || right == nullptr)
         throw new ExceptionActionWithVoidFunction(line);
-    if ((left->IsBaseType() && right->IsBaseType()) || TwoTypesEqual(left, right)) {
+    if ((left->IsBasicType() && right->IsBasicType()) || TwoTypesEqual(left, right)) {
         delete right;
         return;
     }

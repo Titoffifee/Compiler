@@ -5,7 +5,7 @@ array<int> f(int n){
 	for(int i = 2; i < n; i += 1){
 		b[i] += b[i-1] + b[i-2];
 	}
-	return (n);
+	return (b);
 }
 
 int main() {
