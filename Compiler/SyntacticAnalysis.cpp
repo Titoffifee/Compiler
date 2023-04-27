@@ -71,7 +71,7 @@ VariableType* CallFunction(std::vector<Lexeme>& lexemes, int& i,
     if (lexemes[i] != Type::RightRoundBracket)
         throw new ExceptionRightRoundBracket(&lexemes[i]);
     ++i;
-    if (TwoParamsEqual(function_parameters, params))
+    if (!TwoParamsEqual(function_parameters, params))
         throw new ExceptionFunctionUndeclared(function_name);
     delete params;
     return return_value->GetFullCopy();
@@ -464,7 +464,9 @@ void Return(std::vector<Lexeme>& lexemes, int& i,
     ++i;
     if (lexemes[i] == Type::RightRoundBracket) {
         ++i;
-        return;
+        if(current_return_value == nullptr)
+            return;
+        throw new ExceptionWrongExpressionResult(lexemes[i].line_);
     }
     CheckCanDoEqual(current_return_value, Expression(lexemes, i, name_space, function_name_space), lexemes[i].line_);
     if (lexemes[i] != Type::RightRoundBracket)
@@ -553,7 +555,7 @@ VariableType* FunctionType(std::vector<Lexeme>& lexemes, int& i) {
 FunctionParameter* FunctionValue(std::vector<Lexeme>& lexemes, int& i,
     NameSpace* name_space) {
     VariableType* params_type = type(lexemes, i);
-    FunctionParameter* params = new FunctionParameter(params_type);
+    FunctionParameter* params = new FunctionParameter(params_type->GetFullCopy());
     if (lexemes[i] != Type::Ident)
         throw new ExceptionVariableName(&lexemes[i]);
     name_space->Add(lexemes[i], params_type->GetFullCopy());
@@ -606,12 +608,12 @@ void Function(std::vector<Lexeme>& lexemes, int& i,
     }
     ++i;
     current_return_value = return_value;
+    function_name_space->AddFunction(function_name, return_value, params);
     Block(lexemes, i, name_space, function_name_space);
     if (lexemes[i] != Type::RightBrace) {
         throw new ExceptionRightBrace(&lexemes[i]);
     }
     ++i;
-    function_name_space->AddFunction(function_name, return_value, params);
 }
 
 void SyntaciticAlalysis(std::vector<Lexeme>& lexemes) {
