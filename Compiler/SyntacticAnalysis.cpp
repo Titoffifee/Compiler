@@ -74,7 +74,7 @@ VariableType* CallFunction(std::vector<Lexeme>& lexemes, int& i,
     if (!TwoParamsEqual(function_parameters, params))
         throw new ExceptionFunctionUndeclared(function_name);
     delete params;
-    return return_value->GetFullCopy();
+    return (return_value == nullptr ? nullptr : return_value->GetFullCopy());
 }
 
 VariableType* ArrayIndexes(std::vector<Lexeme>& lexemes, int& i, 
