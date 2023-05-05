@@ -1,4 +1,4 @@
 #pragma once
 #include "SemanticAnalysis.h"
 
-void SyntaciticAlalysis(std::vector<Lexeme>& lexemes);
+void SyntaciticAnalysis(std::vector<Lexeme>& lexemes, std::vector <std::vector <std::string> >& poliz);

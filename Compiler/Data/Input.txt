@@ -1,18 +1,12 @@
-array<int> f(int n){
-	array<int>b[7];
-	b[0] = 1;
-	b[1] = 1;
-	for(int i = 2; i < n; i += 1){
-		b[i] += b[i-1] + b[i-2];
-	}
-	return (b);
+array <int> f(int c, d) {
+    array <int> a[10];
+    array <int> b[10] = a;
+    b[0] = a[1];
+    return (b);
 }
 
 int main() {
-    array<int>i[5];
-	for(int i = 0; i<5; i += 1){
-		i = f(i);
-	}
-	print(5);
-	return (0);
+    for (int i = 0; i < 10; i += 4) {
+        i *= 8;
+    }
 }

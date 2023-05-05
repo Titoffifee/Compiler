@@ -10,9 +10,16 @@ int main() {
         std::cout << error;
         return 0;
     }
+    std::vector <std::vector <std::string>> poliz;
     try {
-        SyntaciticAlalysis(lexemes);
+        SyntaciticAnalysis(lexemes, poliz);
         std::cout << "Всё корректно!";
+        for (auto& function : poliz) {
+            std::cout << '\n';
+            for (auto elem : function) {
+                std::cout << elem << ' ';
+            }
+        }
     }
     catch (Exception* exception) {
         exception->print();
